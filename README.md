@@ -4,6 +4,18 @@ Zantes Tweak is a branded Windows optimization suite focused on practical perfor
 
 The project is built as a WPF desktop app and shipped through versioned installers. Public releases are intended to be consumed through GitHub Releases and the in-app update channel.
 
+## Turkce Ozet
+
+Zantes Tweak; sistem optimizasyonu, canli performans izleme, benchmark, Discord oturum entegrasyonu ve release tabanli masaustu dagitimi icin hazirlanmis bir Windows tweak uygulamasidir.
+
+- Modern WPF arayuz
+- Profil tabanli tweak ve temizlik akislari
+- Canli telemetri ve benchmark karsilastirma
+- GitHub Releases tabanli guncelleme sistemi
+- Installer ve surumlu dagitim akisi
+
+Bu depo public olarak gorunur, ancak kodlar acik kaynak degildir. Kodun kopyalanmasi, yeniden kullanimi, dagitimi veya satilmasi lisans disidir.
+
 ## Highlights
 
 - Modern WPF interface with dashboard, benchmark, performance monitor, quick boost, optimizer, network, and game tuner flows
