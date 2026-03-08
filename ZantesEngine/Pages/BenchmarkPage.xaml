@@ -1,0 +1,133 @@
+<Page x:Class="ZantesEngine.Pages.BenchmarkPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="Transparent"
+      FontFamily="Segoe UI">
+
+    <Grid Margin="22,18,22,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock x:Name="TxtModule" Text="MODULE 05" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                <TextBlock x:Name="TxtTitle" Text="BENCHMARK LAB" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="31" FontWeight="Bold"/>
+                <TextBlock x:Name="TxtSubtitle" Text="Capture metrics and compare before/after tweak results." Foreground="{StaticResource TextSecondary}" FontSize="11" Margin="0,3,0,0"/>
+            </StackPanel>
+
+            <Button Grid.Column="1" Content="BACK" Click="GoBack_Click" Style="{StaticResource GhostBtn}"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,14,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="420"/>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Background="#0B0C14" BorderBrush="#352C47" BorderThickness="1" CornerRadius="12" Padding="14">
+                <StackPanel>
+                    <TextBlock x:Name="TxtCaptureHeader" Text="CAPTURE SETUP" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                    <TextBlock x:Name="TxtCaptureNote" Text="Enter FPS values from your overlay (optional), then run 45s capture." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
+
+                    <Grid Margin="0,14,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="8" Padding="8">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtAvgFpsLabel" Text="AVG FPS" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBox x:Name="TbAvgFps" Style="{StaticResource ConsoleBox}" Margin="0,5,0,0" Text="0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="2" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="8" Padding="8">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtLow1Label" Text="1% LOW" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBox x:Name="TbLow1" Style="{StaticResource ConsoleBox}" Margin="0,5,0,0" Text="0"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+
+                    <ProgressBar x:Name="CaptureProgress" Style="{StaticResource PurpleBar}" Height="5" Margin="0,12,0,0" Minimum="0" Maximum="45" Value="0"/>
+                    <TextBlock x:Name="TxtCaptureStatus" Text="Idle" Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0"/>
+
+                    <Button x:Name="BtnStartCapture" Content="START CAPTURE" Click="StartCapture_Click" Style="{StaticResource PrimaryBtn}" Height="38" Margin="0,12,0,0"/>
+                    <Button x:Name="BtnSaveBaseline" Content="SAVE BASELINE" Click="SaveBaseline_Click" Style="{StaticResource GhostBtn}" Margin="0,8,0,0"/>
+                    <Button x:Name="BtnCompare" Content="COMPARE WITH BASELINE" Click="Compare_Click" Style="{StaticResource GhostBtn}" Margin="0,8,0,0"/>
+                    <Button x:Name="BtnClearBaseline" Content="CLEAR BASELINE" Click="ClearBaseline_Click" Style="{StaticResource GhostBtn}" Margin="0,8,0,0"/>
+
+                    <TextBox x:Name="BenchmarkLog" Style="{StaticResource ConsoleBox}" Margin="0,12,0,0" Height="220" IsReadOnly="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True"/>
+                </StackPanel>
+            </Border>
+
+            <StackPanel Grid.Column="2">
+                <Border Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtInsightHeader" Text="SESSION READOUT" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock x:Name="TxtInsightScoreLabel" Text="BENCH SCORE" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtInsightScoreValue" Text="--" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="26" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock x:Name="TxtInsightConsistencyLabel" Text="FRAME CONSISTENCY" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtInsightConsistencyValue" Text="--" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="26" FontWeight="Bold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Grid>
+                        <Grid Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock x:Name="TxtInsightPressureLabel" Text="SYSTEM PRESSURE" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtInsightPressureValue" Text="--" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold" Margin="0,4,0,0"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1">
+                                <TextBlock x:Name="TxtInsightVerdictLabel" Text="VERDICT" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtInsightVerdictValue" Text="Run a capture to get a verdict." Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Margin="0,12,0,0" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtBaselineHeader" Text="BASELINE" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtBaselineBlock" Text="No baseline yet." Foreground="{StaticResource TextPrimary}" FontFamily="Consolas" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Margin="0,12,0,0" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtCurrentHeader" Text="CURRENT RUN" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtCurrentBlock" Text="No capture yet." Foreground="{StaticResource TextPrimary}" FontFamily="Consolas" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Margin="0,12,0,0" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtDeltaHeader" Text="DELTA" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtDeltaBlock" Text="Run compare after a baseline and current capture." Foreground="{StaticResource TextPrimary}" FontFamily="Consolas" FontSize="12" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>
+

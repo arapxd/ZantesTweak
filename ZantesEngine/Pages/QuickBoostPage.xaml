@@ -1,0 +1,208 @@
+<Page x:Class="ZantesEngine.Pages.QuickBoostPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="Transparent"
+      FontFamily="Segoe UI">
+
+    <Grid Margin="22,18,22,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock x:Name="TxtModule" Text="MODULE 00" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                <TextBlock x:Name="TxtTitle" Text="QUICK BOOST" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="31" FontWeight="Bold"/>
+                <TextBlock x:Name="TxtSubTitle" Text="One-click smart optimization based on your hardware." Foreground="{StaticResource TextSecondary}" FontSize="11" Margin="0,4,0,0"/>
+            </StackPanel>
+
+            <Button x:Name="BtnSelectAll"
+                    Grid.Column="1"
+                    Content="SELECT ALL"
+                    Click="SelectAll_Click"
+                    Margin="0,0,10,0"
+                    Style="{StaticResource GhostBtn}"/>
+
+            <Button Grid.Column="2" Content="BACK" Click="GoBack_Click" Style="{StaticResource GhostBtn}"/>
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="0,14,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="372"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+                <UniformGrid Columns="2" Rows="3">
+                    <Border Margin="0,0,10,10" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12" Cursor="Hand" Tag="CbPower" MouseLeftButtonUp="ModuleCard_Click">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock x:Name="TxtCardPower" Text="POWER + CPU" Foreground="{StaticResource TextPrimary}" FontSize="14" FontWeight="Bold"/>
+                                <CheckBox x:Name="CbPower" Grid.Column="1" Style="{StaticResource Toggle}" Checked="ModuleCheck_Changed" Unchecked="ModuleCheck_Changed"/>
+                            </Grid>
+                            <TextBlock x:Name="TxtCardPowerDesc" Grid.Row="1" Text="Adaptive power plan and CPU behavior." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="TxtReasonPower" Grid.Row="2" Text="..." Foreground="#9FB1C7" FontSize="10" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Margin="0,0,0,10" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12" Cursor="Hand" Tag="CbGaming" MouseLeftButtonUp="ModuleCard_Click">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock x:Name="TxtCardGaming" Text="GAMING CORE" Foreground="{StaticResource TextPrimary}" FontSize="14" FontWeight="Bold"/>
+                                <CheckBox x:Name="CbGaming" Grid.Column="1" Style="{StaticResource Toggle}" Checked="ModuleCheck_Changed" Unchecked="ModuleCheck_Changed"/>
+                            </Grid>
+                            <TextBlock x:Name="TxtCardGamingDesc" Grid.Row="1" Text="Scheduler and input latency improvements." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="TxtReasonGaming" Grid.Row="2" Text="..." Foreground="#9FB1C7" FontSize="10" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Margin="0,0,10,10" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12" Cursor="Hand" Tag="CbNetwork" MouseLeftButtonUp="ModuleCard_Click">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock x:Name="TxtCardNetwork" Text="NETWORK LOW-LATENCY" Foreground="{StaticResource TextPrimary}" FontSize="14" FontWeight="Bold"/>
+                                <CheckBox x:Name="CbNetwork" Grid.Column="1" Style="{StaticResource Toggle}" Checked="ModuleCheck_Changed" Unchecked="ModuleCheck_Changed"/>
+                            </Grid>
+                            <TextBlock x:Name="TxtCardNetworkDesc" Grid.Row="1" Text="Jitter-focused route profile." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="TxtReasonNetwork" Grid.Row="2" Text="..." Foreground="#9FB1C7" FontSize="10" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Margin="0,0,0,10" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12" Cursor="Hand" Tag="CbGpu" MouseLeftButtonUp="ModuleCard_Click">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock x:Name="TxtCardGpu" Text="GPU DRIVER TUNE" Foreground="{StaticResource TextPrimary}" FontSize="14" FontWeight="Bold"/>
+                                <CheckBox x:Name="CbGpu" Grid.Column="1" Style="{StaticResource Toggle}" Checked="ModuleCheck_Changed" Unchecked="ModuleCheck_Changed"/>
+                            </Grid>
+                            <TextBlock x:Name="TxtCardGpuDesc" Grid.Row="1" Text="Vendor-aware rendering tweaks." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="TxtReasonGpu" Grid.Row="2" Text="..." Foreground="#9FB1C7" FontSize="10" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Margin="0,0,10,0" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12" Cursor="Hand" Tag="CbServices" MouseLeftButtonUp="ModuleCard_Click">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock x:Name="TxtCardServices" Text="SERVICE TRIM" Foreground="{StaticResource TextPrimary}" FontSize="14" FontWeight="Bold"/>
+                                <CheckBox x:Name="CbServices" Grid.Column="1" Style="{StaticResource Toggle}" Checked="ModuleCheck_Changed" Unchecked="ModuleCheck_Changed"/>
+                            </Grid>
+                            <TextBlock x:Name="TxtCardServicesDesc" Grid.Row="1" Text="Reduces background service overhead." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="TxtReasonServices" Grid.Row="2" Text="..." Foreground="#9FB1C7" FontSize="10" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Border>
+
+                    <Border Margin="0,0,0,0" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="12" Padding="12" Cursor="Hand" Tag="CbMaintenance" MouseLeftButtonUp="ModuleCard_Click">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                                <TextBlock x:Name="TxtCardMaintenance" Text="CLEANUP" Foreground="{StaticResource TextPrimary}" FontSize="14" FontWeight="Bold"/>
+                                <CheckBox x:Name="CbMaintenance" Grid.Column="1" Style="{StaticResource Toggle}" Checked="ModuleCheck_Changed" Unchecked="ModuleCheck_Changed"/>
+                            </Grid>
+                            <TextBlock x:Name="TxtCardMaintenanceDesc" Grid.Row="1" Text="Temp and cache refresh stage." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="TxtReasonMaintenance" Grid.Row="2" Text="..." Foreground="#9FB1C7" FontSize="10" Margin="0,10,0,0" TextWrapping="Wrap"/>
+                        </Grid>
+                    </Border>
+                </UniformGrid>
+            </ScrollViewer>
+
+            <Border Grid.Column="2" Background="#0B0C14" BorderBrush="#352C47" BorderThickness="1" CornerRadius="12" Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel>
+                        <TextBlock x:Name="TxtDeployLabel" Text="DEPLOYMENT CORE" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtDeployTitle" Text="SMART OPTIMIZE" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="28" FontWeight="Bold" Margin="0,4,0,0"/>
+                    </StackPanel>
+
+                    <Border Grid.Row="1" Background="#141522" BorderBrush="#44385B" BorderThickness="1" CornerRadius="9" Padding="12" Margin="0,12,0,0">
+                        <StackPanel>
+                            <TextBlock x:Name="TxtHardwareLabel" Text="HARDWARE PROFILE" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtHardwareSummary" Text="-" Foreground="{StaticResource TextPrimary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            <TextBlock x:Name="TxtSelectedModules" Text="0 / 6 modules selected" Foreground="#9FB1C7" FontSize="10" Margin="0,8,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <StackPanel Grid.Row="2" Margin="0,12,0,0">
+                        <CheckBox x:Name="CbCreateRestorePoint"
+                                  Style="{StaticResource SoftCheck}"
+                                  Content="Create restore point before apply"
+                                  IsChecked="True"/>
+
+                        <Button x:Name="BtnApplySmart"
+                                Content="APPLY SMART OPTIMIZE"
+                                Click="ApplySmart_Click"
+                                Style="{StaticResource PrimaryBtn}"
+                                Height="40"
+                                Margin="0,10,0,0"/>
+
+                        <Button x:Name="BtnOpenAdvanced"
+                                Content="OPEN ADVANCED OPTIMIZER"
+                                Click="OpenAdvanced_Click"
+                                Style="{StaticResource GhostBtn}"
+                                Margin="0,8,0,0"/>
+                    </StackPanel>
+
+                    <TextBox x:Name="OutputBox"
+                             Grid.Row="3"
+                             Style="{StaticResource ConsoleBox}"
+                             Margin="0,12,0,0"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Auto"
+                             IsReadOnly="True"
+                             AcceptsReturn="True"/>
+
+                    <TextBlock x:Name="TxtHint"
+                               Grid.Row="4"
+                               Text="Detailed tweaking stays available in Booster Lab."
+                               Foreground="{StaticResource TextSecondary}"
+                               FontSize="10"
+                               Margin="0,12,0,0"
+                               TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
+
+

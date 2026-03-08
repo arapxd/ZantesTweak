@@ -1,0 +1,1303 @@
+<Window x:Class="ZantesEngine.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        mc:Ignorable="d"
+        Title="Zantes Tweak"
+        Width="1520"
+        Height="920"
+        MinWidth="1260"
+        MinHeight="760"
+        WindowStyle="None"
+        ResizeMode="CanResize"
+        Background="Transparent"
+        AllowsTransparency="False"
+        FontFamily="Segoe UI"
+        SnapsToDevicePixels="True"
+        UseLayoutRounding="True"
+        MouseMove="Window_MouseMove"
+        MouseLeave="Window_MouseLeave">
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="0"
+                            CornerRadius="22"
+                            GlassFrameThickness="0"
+                            ResizeBorderThickness="8"
+                            UseAeroCaptionButtons="False"/>
+    </shell:WindowChrome.WindowChrome>
+
+    <Grid Background="Transparent">
+        <Border CornerRadius="28" Margin="10" Background="{StaticResource WindowBackgroundGradient}">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="32" ShadowDepth="0" Opacity="0.26" Color="#03070C"/>
+            </Border.Effect>
+        </Border>
+
+        <Canvas x:Name="AmbientCanvas" Margin="10" IsHitTestVisible="False"/>
+
+        <Grid Margin="10">
+            <Image Source="pack://application:,,,/banner.png"
+                   Stretch="UniformToFill"
+                   Opacity="0.15"
+                   Margin="-40,-10,-40,-24"
+                   IsHitTestVisible="False"
+                   RenderOptions.BitmapScalingMode="HighQuality">
+                <Image.RenderTransform>
+                    <ScaleTransform ScaleX="1.08" ScaleY="1.08"/>
+                </Image.RenderTransform>
+            </Image>
+
+            <Rectangle IsHitTestVisible="False">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                        <GradientStop Color="#A205050A" Offset="0"/>
+                        <GradientStop Color="#C7080810" Offset="0.45"/>
+                        <GradientStop Color="#DA12111A" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Ellipse Width="420"
+                     Height="420"
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Top"
+                     Margin="0,-150,-80,0"
+                     IsHitTestVisible="False">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#55422E72" Offset="0"/>
+                        <GradientStop Color="#003B2C67" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <Ellipse Width="360"
+                     Height="360"
+                     HorizontalAlignment="Left"
+                     VerticalAlignment="Bottom"
+                     Margin="-140,0,0,-130"
+                     IsHitTestVisible="False">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#44473662" Offset="0"/>
+                        <GradientStop Color="#004F3D69" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <Border CornerRadius="28"
+                    Background="#D90E0D16"
+                    BorderBrush="#312940"
+                    BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="78"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Grid.Row="0"
+                            Margin="14,14,14,0"
+                            CornerRadius="20"
+                            Background="#C2141220"
+                            BorderBrush="#372D49"
+                            BorderThickness="1"
+                            MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                        <Grid Margin="18,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="340"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="132"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Border Width="42"
+                                        Height="42"
+                                        CornerRadius="14"
+                                        ClipToBounds="True">
+                                    <Image Source="pack://application:,,,/unnamed.jpg"
+                                           Stretch="UniformToFill"
+                                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                                </Border>
+
+                                <StackPanel Margin="14,0,0,0" VerticalAlignment="Center">
+                                    <TextBlock x:Name="TxtAppName"
+                                               Text="ZANTES TWEAK"
+                                               Foreground="{StaticResource TextPrimary}"
+                                               FontFamily="Bahnschrift"
+                                               FontSize="24"
+                                               FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtAppControl"
+                                               Text="TACTICAL CONSOLE"
+                                               Foreground="{StaticResource TextSecondary}"
+                                               FontSize="10"
+                                               FontWeight="SemiBold"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1"
+                                        Orientation="Horizontal"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <Ellipse Width="8" Height="8" Fill="{StaticResource AccentPrimary}" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtStatusStable"
+                                               Text="SYSTEM STABLE"
+                                               Margin="8,0,16,0"
+                                               Foreground="{StaticResource TextPrimary}"
+                                               FontSize="10"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+                                    <Ellipse Width="8" Height="8" Fill="#A78DE7" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtStatusDiscord"
+                                               Text="DISCORD READY"
+                                               Margin="8,0,16,0"
+                                               Foreground="{StaticResource TextPrimary}"
+                                               FontSize="10"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+                                    <Ellipse Width="8" Height="8" Fill="#CDB7E8" VerticalAlignment="Center"/>
+                                    <TextBlock x:Name="TxtStatusAuthorized"
+                                               Text="AUTHORIZED BY ZANTES"
+                                               Margin="8,0,0,0"
+                                               Foreground="{StaticResource TextPrimary}"
+                                               FontSize="10"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+                                </StackPanel>
+                            </StackPanel>
+
+                            <Border Grid.Column="2"
+                                    Margin="0,12,18,12"
+                                    Padding="14,0"
+                                    CornerRadius="16"
+                                    Background="#141520"
+                                    BorderBrush="#372D49"
+                                    BorderThickness="1"
+                                    VerticalAlignment="Stretch">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="18"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <StackPanel VerticalAlignment="Center">
+                                        <TextBlock x:Name="TxtHeaderHint"
+                                                   Text="ADAPTIVE PERFORMANCE ENGINE"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="9"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtBrandCredit"
+                                                   Text="MADE BY ARAP"
+                                                   Margin="0,2,0,0"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="10"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                                        <TextBlock Text="CPU"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="9"
+                                                   HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="HeaderCpu"
+                                                   Text="0.0%"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontFamily="Bahnschrift"
+                                                   FontSize="19"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Right"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                                        <TextBlock Text="RAM"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="9"
+                                                   HorizontalAlignment="Right"/>
+                                        <TextBlock x:Name="HeaderRam"
+                                                   Text="0.0%"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontFamily="Bahnschrift"
+                                                   FontSize="19"
+                                                   FontWeight="Bold"
+                                                   HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <StackPanel Grid.Column="3"
+                                        Orientation="Horizontal"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center">
+                                <Button Style="{StaticResource WinBtn}" Click="BtnMin_Click">
+                                    <TextBlock Text="&#xE921;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
+                                </Button>
+                                <Button x:Name="BtnMax" Style="{StaticResource WinBtn}" Click="BtnMax_Click" Margin="8,0,0,0">
+                                    <TextBlock Text="&#xE922;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
+                                </Button>
+                                <Button Style="{StaticResource CloseBtn}" Click="BtnClose_Click" Margin="8,0,0,0">
+                                    <TextBlock Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <Grid Grid.Row="1" Margin="14,14,14,14">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="320"/>
+                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <Border Grid.Column="0"
+                                CornerRadius="24"
+                                Background="#BC10111A"
+                                BorderBrush="#382E4A"
+                                BorderThickness="1"
+                                Padding="18">
+                            <Grid x:Name="SidebarPanel">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Border Grid.Row="0"
+                                        CornerRadius="20"
+                                        Background="#151623"
+                                        BorderBrush="#47395F"
+                                        BorderThickness="1"
+                                        ClipToBounds="True">
+                                    <Grid>
+                                        <Rectangle x:Name="SessionBackgroundVisual" Opacity="0.24">
+                                            <Rectangle.Fill>
+                                                <ImageBrush ImageSource="pack://application:,,,/banner.png"
+                                                            Stretch="UniformToFill"
+                                                            AlignmentX="Center"
+                                                            AlignmentY="Center"/>
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+
+                                        <Image Source="pack://application:,,,/banner.png"
+                                               Stretch="UniformToFill"
+                                               Opacity="0.08"
+                                               Margin="60,-16,-20,-16"
+                                               IsHitTestVisible="False"/>
+
+                                        <Rectangle Fill="#B40E0E18"/>
+
+                                        <Rectangle VerticalAlignment="Bottom" Height="110">
+                                            <Rectangle.Fill>
+                                                <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                    <GradientStop Color="#0014141D" Offset="0"/>
+                                                    <GradientStop Color="#C8151422" Offset="1"/>
+                                                </LinearGradientBrush>
+                                            </Rectangle.Fill>
+                                        </Rectangle>
+
+                                        <TextBlock x:Name="AvatarFallbackText"
+                                                   Text="?"
+                                                   Margin="0,-10,18,0"
+                                                   HorizontalAlignment="Right"
+                                                   VerticalAlignment="Top"
+                                                   Foreground="#56EAF8FF"
+                                                   FontFamily="Bahnschrift"
+                                                   FontSize="86"
+                                                   FontWeight="Bold"
+                                                   Opacity="0.2"/>
+
+                                        <Grid Margin="18" VerticalAlignment="Bottom">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="74"/>
+                                                <ColumnDefinition Width="14"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <Grid Width="74" Height="74" VerticalAlignment="Bottom">
+                                                <Ellipse Fill="#A8121320"
+                                                         Stroke="#5F4B7A"
+                                                         StrokeThickness="1"/>
+                                                <Ellipse x:Name="DiscordAvatar"
+                                                         Margin="4"
+                                                         Fill="#252131"
+                                                         Stroke="#8A72B6"
+                                                         StrokeThickness="1"/>
+                                            </Grid>
+
+                                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                                <TextBlock x:Name="TxtSessionLabel"
+                                                           Text="SESSION"
+                                                           Foreground="#C9B8E6"
+                                                           FontSize="9"
+                                                           FontWeight="Bold"/>
+                                                <TextBlock x:Name="AuthStatusText"
+                                                           Text="LOCKED"
+                                                           Margin="0,4,0,0"
+                                                           Foreground="{StaticResource TextPrimary}"
+                                                           FontFamily="Bahnschrift"
+                                                           FontSize="22"
+                                                           FontWeight="Bold"/>
+                                                <TextBlock x:Name="TxtDiscordUserLabel"
+                                                           Text="DISCORD USER"
+                                                           Margin="0,8,0,0"
+                                                           Foreground="#B4A6CC"
+                                                           FontSize="9"
+                                                           FontWeight="Bold"/>
+                                                <TextBlock x:Name="TxtDiscordUserName"
+                                                           Text="Not linked"
+                                                           Foreground="{StaticResource TextPrimary}"
+                                                           FontSize="12"
+                                                           FontWeight="SemiBold"
+                                                           TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </Grid>
+                                </Border>
+
+                                <StackPanel Grid.Row="1" Margin="0,18,0,0">
+                                    <Border CornerRadius="20"
+                                            Background="#14141E"
+                                            BorderBrush="#47395F"
+                                            BorderThickness="1"
+                                            Padding="14">
+                                        <StackPanel>
+                                            <TextBlock x:Name="TxtLanguageLabel"
+                                                       Text="LANGUAGE"
+                                                       Foreground="{StaticResource TextMuted}"
+                                                       FontSize="9"
+                                                       FontWeight="Bold"/>
+                                            <ComboBox x:Name="LanguageSelector"
+                                                      Style="{StaticResource DarkCombo}"
+                                                      Margin="0,8,0,0"
+                                                      SelectionChanged="LanguageSelector_SelectionChanged">
+                                                <ComboBoxItem x:Name="LangEnItem" Tag="en" Content="English"/>
+                                                <ComboBoxItem x:Name="LangTrItem" Tag="tr" Content="Turkish"/>
+                                            </ComboBox>
+                                        </StackPanel>
+                                    </Border>
+                                </StackPanel>
+
+                                <StackPanel Grid.Row="2" Margin="0,18,0,0">
+                                    <RadioButton x:Name="NavDashboard"
+                                                 Tag="dashboard"
+                                                 Style="{StaticResource NavBtn}"
+                                                 Checked="Nav_Checked">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE80F;"
+                                                       FontFamily="Segoe MDL2 Assets"
+                                                       Foreground="{StaticResource AccentPrimary}"
+                                                       FontSize="13"
+                                                       VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock x:Name="TxtNavDashboard"
+                                                           Text="DASHBOARD"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="Live status and recommended flow"
+                                                           Foreground="{StaticResource TextMuted}"
+                                                           FontSize="10"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </RadioButton>
+
+                                    <RadioButton x:Name="NavQuickBoost"
+                                                 Tag="quickboost"
+                                                 Style="{StaticResource NavBtn}"
+                                                 Margin="0,4,0,0"
+                                                 Checked="Nav_Checked">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE945;"
+                                                       FontFamily="Segoe MDL2 Assets"
+                                                       Foreground="{StaticResource AccentPrimary}"
+                                                       FontSize="13"
+                                                       VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock x:Name="TxtNavQuickBoost"
+                                                           Text="QUICK BOOST"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="Fast, hardware-aware safe tuning"
+                                                           Foreground="{StaticResource TextMuted}"
+                                                           FontSize="10"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </RadioButton>
+
+                                    <RadioButton x:Name="NavOptimizer"
+                                                 Tag="optimizer"
+                                                 Style="{StaticResource NavBtn}"
+                                                 Margin="0,4,0,0"
+                                                 Checked="Nav_Checked">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE713;"
+                                                       FontFamily="Segoe MDL2 Assets"
+                                                       Foreground="{StaticResource AccentPrimary}"
+                                                       FontSize="13"
+                                                       VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock x:Name="TxtNavOptimizer"
+                                                           Text="BOOSTER LAB"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="Advanced tweaks and restore flow"
+                                                           Foreground="{StaticResource TextMuted}"
+                                                           FontSize="10"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </RadioButton>
+
+                                    <RadioButton x:Name="NavGameTuner"
+                                                 Tag="tuner"
+                                                 Style="{StaticResource NavBtn}"
+                                                 Margin="0,4,0,0"
+                                                 Checked="Nav_Checked">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE7FC;"
+                                                       FontFamily="Segoe MDL2 Assets"
+                                                       Foreground="{StaticResource AccentPrimary}"
+                                                       FontSize="13"
+                                                       VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock x:Name="TxtNavTuner"
+                                                           Text="GAME TUNER"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="Per-title profiles and presets"
+                                                           Foreground="{StaticResource TextMuted}"
+                                                           FontSize="10"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </RadioButton>
+
+                                    <RadioButton x:Name="NavNetwork"
+                                                 Tag="network"
+                                                 Style="{StaticResource NavBtn}"
+                                                 Margin="0,4,0,0"
+                                                 Checked="Nav_Checked">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE968;"
+                                                       FontFamily="Segoe MDL2 Assets"
+                                                       Foreground="{StaticResource AccentPrimary}"
+                                                       FontSize="13"
+                                                       VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock x:Name="TxtNavNetwork"
+                                                           Text="NETWORK"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="Low-latency route and spike guard"
+                                                           Foreground="{StaticResource TextMuted}"
+                                                           FontSize="10"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </RadioButton>
+
+                                    <RadioButton x:Name="NavPerformance"
+                                                 Tag="performance"
+                                                 Style="{StaticResource NavBtn}"
+                                                 Margin="0,4,0,0"
+                                                 Checked="Nav_Checked">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE9D9;"
+                                                       FontFamily="Segoe MDL2 Assets"
+                                                       Foreground="{StaticResource AccentPrimary}"
+                                                       FontSize="13"
+                                                       VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock x:Name="TxtNavPerformance"
+                                                           Text="PERFORMANCE"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="Sensors and live device metrics"
+                                                           Foreground="{StaticResource TextMuted}"
+                                                           FontSize="10"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </RadioButton>
+
+                                    <RadioButton x:Name="NavBenchmark"
+                                                 Tag="benchmark"
+                                                 Style="{StaticResource NavBtn}"
+                                                 Margin="0,4,0,0"
+                                                 Checked="Nav_Checked">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="24"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Text="&#xE9D2;"
+                                                       FontFamily="Segoe MDL2 Assets"
+                                                       Foreground="{StaticResource AccentPrimary}"
+                                                       FontSize="13"
+                                                       VerticalAlignment="Center"/>
+                                            <StackPanel Grid.Column="1">
+                                                <TextBlock x:Name="TxtNavBenchmark"
+                                                           Text="BENCHMARK"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="12"/>
+                                                <TextBlock Text="Frame tests and score tracking"
+                                                           Foreground="{StaticResource TextMuted}"
+                                                           FontSize="10"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </RadioButton>
+                                </StackPanel>
+
+                                <Border Grid.Row="3"
+                                        Margin="0,18,0,0"
+                                        CornerRadius="20"
+                                        Background="#151623"
+                                        BorderBrush="#47395F"
+                                        BorderThickness="1"
+                                        Padding="16">
+                                    <DockPanel LastChildFill="False">
+                                        <StackPanel DockPanel.Dock="Left" Width="150">
+                                            <TextBlock x:Name="TxtSidebarTip"
+                                                       Text="Run as Administrator for full tweak effects."
+                                                       Foreground="{StaticResource TextSecondary}"
+                                                       FontSize="11"
+                                                       TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <Button DockPanel.Dock="Right"
+                                                Margin="12,0,0,0"
+                                                Style="{StaticResource GhostBtn}"
+                                                Click="BtnOpenSettings_Click">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Text="&#xE713;"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           FontSize="11"
+                                                           Margin="0,0,8,0"/>
+                                                <TextBlock x:Name="TxtSettingsButton"
+                                                           Text="SETTINGS"
+                                                           FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </Button>
+                                    </DockPanel>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Column="2"
+                                CornerRadius="24"
+                                Background="#B111121A"
+                                BorderBrush="#382E4A"
+                                BorderThickness="1"
+                                Padding="14">
+                            <Frame x:Name="MainFrame"
+                                   Background="Transparent"
+                                   NavigationUIVisibility="Hidden"/>
+                        </Border>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Grid x:Name="LoginOverlay" Background="#DE06050B">
+                <Grid HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Grid.RenderTransform>
+                        <ScaleTransform x:Name="LoginOverlayScale" ScaleX="1" ScaleY="1"/>
+                    </Grid.RenderTransform>
+
+                    <Border Width="1100"
+                            MaxWidth="1040"
+                            Padding="30"
+                            CornerRadius="34"
+                            Background="#F009080F"
+                            BorderBrush="#4B3A65"
+                            BorderThickness="1">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="30" ShadowDepth="0" Opacity="0.34" Color="#140F1E"/>
+                        </Border.Effect>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="1.25*"/>
+                                <ColumnDefinition Width="26"/>
+                                <ColumnDefinition Width="0.88*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Border CornerRadius="30"
+                                    Background="#15131E"
+                                    BorderBrush="#45365F"
+                                    BorderThickness="1"
+                                    Padding="28"
+                                    ClipToBounds="True">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Rectangle Grid.RowSpan="4"
+                                               Opacity="0.18"
+                                               IsHitTestVisible="False">
+                                        <Rectangle.Fill>
+                                            <ImageBrush ImageSource="pack://application:,,,/banner.png"
+                                                        Stretch="UniformToFill"
+                                                        ViewboxUnits="RelativeToBoundingBox"
+                                                        Viewbox="0.26,0.03,0.46,0.94"
+                                                        AlignmentX="Center"
+                                                        AlignmentY="Center"/>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+
+                                    <Rectangle Grid.RowSpan="4" IsHitTestVisible="False">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#E9121018" Offset="0"/>
+                                                <GradientStop Color="#D314111C" Offset="0.34"/>
+                                                <GradientStop Color="#BF15111C" Offset="0.68"/>
+                                                <GradientStop Color="#D915111C" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtAuthLabel"
+                                                   Text="AUTHENTICATION"
+                                                   Foreground="{StaticResource AccentPrimary}"
+                                                   FontSize="10"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtLoginTitle"
+                                                   Text="ELITE CONTROL ACCESS"
+                                                   Margin="0,12,0,0"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontFamily="Bahnschrift"
+                                                   FontSize="42"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtLoginDesc"
+                                                   Text="Sign in with Discord to unlock adaptive profile engine and tweak modules."
+                                                   Margin="0,14,0,0"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="15"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <Border Grid.Row="1"
+                                            Margin="0,22,0,0"
+                                            Padding="20"
+                                            CornerRadius="22"
+                                            Background="#120F18"
+                                            BorderBrush="#46385F"
+                                            BorderThickness="1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                            </Grid.ColumnDefinitions>
+
+                                            <StackPanel>
+                                                <TextBlock x:Name="TxtDiscordTitle"
+                                                           Text="Discord Login"
+                                                           Foreground="{StaticResource TextPrimary}"
+                                                           FontSize="18"
+                                                           FontWeight="Bold"/>
+                                                <TextBlock x:Name="TxtOauthDesc"
+                                                           Text="OAuth flow is active. Sign in once and continue directly on next launches."
+                                                           Margin="0,6,0,0"
+                                                           Foreground="{StaticResource TextSecondary}"
+                                                           FontSize="11"
+                                                           TextWrapping="Wrap"/>
+                                            </StackPanel>
+
+                                            <Border Grid.Column="1"
+                                                    Width="70"
+                                                    Height="70"
+                                                    CornerRadius="22"
+                                                    Background="#251C36"
+                                                    BorderBrush="#7B659C"
+                                                    BorderThickness="1"
+                                                    Margin="16,0,0,0">
+                                                <TextBlock Text="&#xE001;"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           FontSize="28"
+                                                           Foreground="{StaticResource AccentPrimary}"
+                                                           HorizontalAlignment="Center"
+                                                           VerticalAlignment="Center"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+
+                                    <Grid Grid.Row="2" Margin="0,22,0,0">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <UniformGrid Columns="2">
+                                            <Border Margin="0,0,10,10"
+                                                    Padding="14"
+                                                    CornerRadius="18"
+                                                    Background="#15111E"
+                                                    BorderBrush="#3F3158"
+                                                    BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock x:Name="TxtLoginRestoreTitle" Text="SESSION RESTORE"
+                                                               Foreground="{StaticResource AccentPrimary}"
+                                                               FontSize="10"
+                                                               FontWeight="Bold"/>
+                                                    <TextBlock x:Name="TxtLoginRestoreDesc" Text="One Discord sign-in keeps the shell ready on future launches."
+                                                               Margin="0,8,0,0"
+                                                               Foreground="{StaticResource TextSecondary}"
+                                                               FontSize="11"
+                                                               TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border Margin="0,0,0,10"
+                                                    Padding="14"
+                                                    CornerRadius="18"
+                                                    Background="#15111E"
+                                                    BorderBrush="#3F3158"
+                                                    BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock x:Name="TxtLoginProfileTitle" Text="PROFILE SYNC"
+                                                               Foreground="{StaticResource AccentPrimary}"
+                                                               FontSize="10"
+                                                               FontWeight="Bold"/>
+                                                    <TextBlock x:Name="TxtLoginProfileDesc" Text="Avatar, account status and interface shell personalize automatically."
+                                                               Margin="0,8,0,0"
+                                                               Foreground="{StaticResource TextSecondary}"
+                                                               FontSize="11"
+                                                               TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </UniformGrid>
+
+                                        <TextBlock x:Name="TxtLoginFeatures"
+                                                   Grid.Row="1"
+                                                   Text="Discord profile sync, avatar card, language-aware UI, rich presence"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"/>
+
+                                        <StackPanel x:Name="LoginBusyPanel"
+                                                    Grid.Row="2"
+                                                    Margin="0,18,0,0"
+                                                    Visibility="Collapsed">
+                                            <ProgressBar x:Name="LoginBusyProgress"
+                                                         Style="{StaticResource PurpleBar}"
+                                                         IsIndeterminate="True"/>
+                                            <TextBlock x:Name="TxtLoginStatus"
+                                                       Text="Waiting for sign-in..."
+                                                       Margin="0,8,0,0"
+                                                       Foreground="{StaticResource TextSecondary}"
+                                                       FontSize="11"/>
+                                        </StackPanel>
+
+                                        <TextBlock x:Name="TxtLoginNote"
+                                                   Grid.Row="3"
+                                                   Margin="0,18,0,0"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="10"
+                                                   TextWrapping="Wrap"
+                                                   Text="No password input used. Discord-only flow is active for next phase."/>
+                                    </Grid>
+
+                                    <StackPanel Grid.Row="3"
+                                                Orientation="Horizontal">
+                                        <Border Width="26"
+                                                Height="26"
+                                                CornerRadius="9"
+                                                ClipToBounds="True"
+                                                Background="#1B1625"
+                                                BorderBrush="#4A3B63"
+                                                BorderThickness="1">
+                                            <Image Source="pack://application:,,,/unnamed.jpg"
+                                                   Stretch="UniformToFill"
+                                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                                        </Border>
+                                        <TextBlock x:Name="TxtLoginBrand"
+                                                   Text="MADE BY ARAP"
+                                                   Margin="10,0,0,0"
+                                                   VerticalAlignment="Center"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="10"
+                                                   FontWeight="SemiBold"/>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+
+                            <Border Grid.Column="2"
+                                    CornerRadius="30"
+                                    Padding="26"
+                                    Background="#100D16"
+                                    BorderBrush="#3F3158"
+                                    BorderThickness="1"
+                                    ClipToBounds="True">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <Rectangle Grid.RowSpan="3"
+                                               Opacity="0.16"
+                                               IsHitTestVisible="False">
+                                        <Rectangle.Fill>
+                                            <ImageBrush ImageSource="pack://application:,,,/banner.png"
+                                                        Stretch="UniformToFill"
+                                                        ViewboxUnits="RelativeToBoundingBox"
+                                                        Viewbox="0.3,0.04,0.42,0.92"
+                                                        AlignmentX="Center"
+                                                        AlignmentY="Center"/>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+
+                                    <Rectangle Grid.RowSpan="3" IsHitTestVisible="False">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                                <GradientStop Color="#D0100D16" Offset="0"/>
+                                                <GradientStop Color="#CA120F19" Offset="0.55"/>
+                                                <GradientStop Color="#D9120F18" Offset="1"/>
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtLoginConsoleLabel" Text="Console unlock"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="10"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtLoginConsoleTitle" Text="One secure sign-in gates the full optimization suite."
+                                                   Margin="0,8,0,0"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontFamily="Bahnschrift"
+                                                   FontSize="26"
+                                                   FontWeight="Bold"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+
+                                    <StackPanel Grid.Row="1" VerticalAlignment="Center">
+                                        <Border CornerRadius="22"
+                                                Padding="20"
+                                                Background="#15111E"
+                                                BorderBrush="#47395F"
+                                                BorderThickness="1">
+                                            <StackPanel>
+                                                <TextBlock x:Name="TxtLoginUnlocksLabel" Text="What unlocks"
+                                                           Foreground="{StaticResource AccentPrimary}"
+                                                           FontSize="10"
+                                                           FontWeight="Bold"/>
+                                                <TextBlock x:Name="TxtLoginUnlocksDesc" Text="Adaptive dashboards, Quick Boost landing, Discord session restore, presence sync and personalized shell."
+                                                           Margin="0,10,0,0"
+                                                           Foreground="{StaticResource TextSecondary}"
+                                                           FontSize="12"
+                                                           TextWrapping="Wrap"/>
+                                            </StackPanel>
+                                        </Border>
+
+                                        <UniformGrid Margin="0,14,0,0" Columns="2">
+                                            <Border Margin="0,0,10,0"
+                                                    Padding="14"
+                                                    CornerRadius="18"
+                                                    Background="#130F1B"
+                                                    BorderBrush="#392C52"
+                                                    BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock x:Name="TxtLoginDashboardLabel" Text="DASHBOARD"
+                                                               Foreground="{StaticResource TextMuted}"
+                                                               FontSize="10"
+                                                               FontWeight="Bold"/>
+                                                    <TextBlock x:Name="TxtLoginDashboardValue" Text="Ready"
+                                                               Margin="0,6,0,0"
+                                                               Foreground="{StaticResource TextPrimary}"
+                                                               FontFamily="Bahnschrift"
+                                                               FontSize="22"
+                                                               FontWeight="Bold"/>
+                                                </StackPanel>
+                                            </Border>
+
+                                            <Border Padding="14"
+                                                    CornerRadius="18"
+                                                    Background="#130F1B"
+                                                    BorderBrush="#392C52"
+                                                    BorderThickness="1">
+                                                <StackPanel>
+                                                    <TextBlock x:Name="TxtLoginSessionCardLabel" Text="SESSION"
+                                                               Foreground="{StaticResource TextMuted}"
+                                                               FontSize="10"
+                                                               FontWeight="Bold"/>
+                                                    <TextBlock x:Name="TxtLoginSessionCardValue" Text="Discord"
+                                                               Margin="0,6,0,0"
+                                                               Foreground="{StaticResource TextPrimary}"
+                                                               FontFamily="Bahnschrift"
+                                                               FontSize="22"
+                                                               FontWeight="Bold"/>
+                                                </StackPanel>
+                                            </Border>
+                                        </UniformGrid>
+
+                                        <Button x:Name="BtnDiscordLogin"
+                                                Margin="0,20,0,0"
+                                                Style="{StaticResource PrimaryBtn}"
+                                                Click="BtnDiscordLogin_Click"
+                                                Content="CONTINUE WITH DISCORD"/>
+                                    </StackPanel>
+
+                                    <Border Grid.Row="2"
+                                            CornerRadius="18"
+                                            Padding="15"
+                                            Background="#130F1B"
+                                            BorderBrush="#392C52"
+                                            BorderThickness="1">
+                                        <TextBlock x:Name="TxtLoginFooterNote" Text="The app keeps your layout preference and language after authentication."
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="10"
+                                                   TextWrapping="Wrap"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </Border>
+                </Grid>
+            </Grid>
+
+            <Grid x:Name="SettingsOverlay"
+                  Visibility="Collapsed"
+                  Opacity="0"
+                  Background="#B808070D"
+                  MouseDown="SettingsOverlay_MouseDown">
+                <Border Width="560"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        CornerRadius="28"
+                        Background="#EC0E0D16"
+                        BorderBrush="#413458"
+                        BorderThickness="1"
+                        Padding="24"
+                        MouseDown="SettingsPanel_MouseDown">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel>
+                                <TextBlock x:Name="TxtSettingsTitle"
+                                           Text="SESSION SETTINGS"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="32"
+                                           FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtSettingsSub"
+                                           Text="Manage account session and Discord Rich Presence."
+                                           Margin="0,6,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="12"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+
+                            <Button Grid.Column="1"
+                                    Style="{StaticResource WinBtn}"
+                                    Click="BtnCloseSettings_Click">
+                                <TextBlock Text="&#xE8BB;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
+                            </Button>
+                        </Grid>
+
+                        <Border Grid.Row="1"
+                                Margin="0,22,0,0"
+                                CornerRadius="20"
+                                Background="#141522"
+                                BorderBrush="#3B304E"
+                                BorderThickness="1"
+                                Padding="18">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel>
+                                    <TextBlock x:Name="TxtSettingsAccountLabel"
+                                               Text="ACCOUNT"
+                                               Foreground="{StaticResource TextMuted}"
+                                               FontSize="10"
+                                               FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtSettingsCurrentLanguageValue"
+                                               Text="English"
+                                               Margin="0,8,0,0"
+                                               Foreground="{StaticResource TextPrimary}"
+                                               FontSize="18"
+                                               FontWeight="Bold"/>
+                                </StackPanel>
+
+                                <Button x:Name="BtnSwitchAccount"
+                                        Grid.Column="1"
+                                        Margin="12,0,8,0"
+                                        Style="{StaticResource GhostBtn}"
+                                        Click="BtnSwitchAccount_Click"
+                                        Content="SWITCH ACCOUNT"/>
+
+                                <Button x:Name="BtnLogout"
+                                        Grid.Column="2"
+                                        Style="{StaticResource GhostBtn}"
+                                        Click="BtnLogout_Click"
+                                        Content="LOGOUT"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="2"
+                                Margin="0,16,0,0"
+                                CornerRadius="20"
+                                Background="#141522"
+                                BorderBrush="#3B304E"
+                                BorderThickness="1"
+                                Padding="18">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtSettingsPresenceLabel"
+                                                   Text="DISCORD RICH PRESENCE"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtSettingsPresenceDesc"
+                                                   Text="Show current Zantes Tweak activity on Discord profile."
+                                                   Margin="0,4,0,0"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="RichPresenceToggle"
+                                              Grid.Column="1"
+                                              Style="{StaticResource Toggle}"
+                                              Click="RichPresenceToggle_Click"
+                                              VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <Grid Grid.Row="1" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtSettingsPinLabel"
+                                                   Text="PIN WINDOW"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtSettingsPinDesc"
+                                                   Text="Keep Zantes Tweak always on top."
+                                                   Margin="0,4,0,0"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="AlwaysOnTopToggle"
+                                              Grid.Column="1"
+                                              Style="{StaticResource Toggle}"
+                                              Click="AlwaysOnTopToggle_Click"
+                                              VerticalAlignment="Center"/>
+                                </Grid>
+
+                                <Grid Grid.Row="2" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtSettingsWindowLabel"
+                                                   Text="WINDOW MODE"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtSettingsWindowDesc"
+                                                   Text="Allow maximized launch without forced full-screen."
+                                                   Margin="0,4,0,0"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="LaunchMaximizedToggle"
+                                              Grid.Column="1"
+                                              Style="{StaticResource Toggle}"
+                                              Click="LaunchMaximizedToggle_Click"
+                                              VerticalAlignment="Center"/>
+                                </Grid>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="3"
+                                Margin="0,16,0,0"
+                                CornerRadius="20"
+                                Background="#141522"
+                                BorderBrush="#3B304E"
+                                BorderThickness="1"
+                                Padding="18">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtSettingsCurrentLanguage"
+                                           Text="CURRENT LANGUAGE"
+                                           Foreground="{StaticResource TextMuted}"
+                                           FontSize="10"
+                                           FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtSettingsLanguageHint" Text="The shell updates instantly when you switch language from the sidebar."
+                                           Margin="0,8,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Row="4"
+                                Margin="0,16,0,0"
+                                CornerRadius="20"
+                                Background="#141522"
+                                BorderBrush="#3B304E"
+                                BorderThickness="1"
+                                Padding="18">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtSettingsUpdateTitle"
+                                                   Text="UPDATE CHANNEL"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontSize="13"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtSettingsUpdateDesc"
+                                                   Text="Checks GitHub Releases for a newer public build without storing any secret token in the app."
+                                                   Margin="0,4,0,0"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <Button x:Name="BtnCheckUpdates"
+                                            Grid.Column="1"
+                                            Margin="12,0,8,0"
+                                            Style="{StaticResource GhostBtn}"
+                                            Click="BtnCheckUpdates_Click"
+                                            Content="CHECK NOW"/>
+                                    <Button x:Name="BtnOpenReleasePage"
+                                            Grid.Column="2"
+                                            Style="{StaticResource GhostBtn}"
+                                            Click="BtnOpenReleasePage_Click"
+                                            Content="OPEN RELEASE PAGE"/>
+                                </Grid>
+
+                                <Grid Grid.Row="1" Margin="0,16,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtSettingsVersionLabel"
+                                                   Text="CURRENT VERSION"
+                                                   Foreground="{StaticResource TextMuted}"
+                                                   FontSize="10"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtSettingsVersionValue"
+                                                   Text="1.0.0"
+                                                   Margin="0,8,0,0"
+                                                   Foreground="{StaticResource TextPrimary}"
+                                                   FontSize="18"
+                                                   FontWeight="Bold"/>
+                                        <TextBlock x:Name="TxtSettingsUpdateStatus"
+                                                   Text="Update channel is not configured yet."
+                                                   Margin="0,8,0,0"
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                    <CheckBox x:Name="AutoCheckUpdatesToggle"
+                                              Grid.Column="1"
+                                              Style="{StaticResource Toggle}"
+                                              Click="AutoCheckUpdatesToggle_Click"
+                                              VerticalAlignment="Top"/>
+                                </Grid>
+
+                                <TextBlock Grid.Row="2"
+                                           x:Name="TxtSettingsAutoCheckLabel"
+                                           Text="AUTO-CHECK ON LAUNCH"
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextMuted}"
+                                           FontSize="10"
+                                           FontWeight="Bold"/>
+                            </Grid>
+                        </Border>
+
+                        <Border Grid.Row="5"
+                                Margin="0,16,0,0"
+                                CornerRadius="18"
+                                Background="#14141E"
+                                BorderBrush="#382E49"
+                                BorderThickness="1"
+                                Padding="14">
+                            <TextBlock x:Name="TxtSettingsCloseHint" Text="Click outside this panel to close settings."
+                                       Foreground="{StaticResource TextMuted}"
+                                       FontSize="10"/>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>

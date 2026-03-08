@@ -1,0 +1,267 @@
+<Page x:Class="ZantesEngine.Pages.PerformancePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="Transparent"
+      FontFamily="Segoe UI">
+
+    <Grid Margin="20,16,20,18">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel>
+                <TextBlock x:Name="TxtModule" Text="MODULE 04" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                <TextBlock x:Name="TxtTitle" Text="PERFORMANCE MONITOR" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="34" FontWeight="Bold"/>
+                <TextBlock x:Name="TxtSubtitle" Text="Task manager style live hardware telemetry." Foreground="{StaticResource TextSecondary}" FontSize="11" Margin="0,4,0,0"/>
+            </StackPanel>
+
+            <Button Grid.Column="1" Content="BACK" Click="GoBack_Click" Style="{StaticResource GhostBtn}" Height="34" Padding="14,0" VerticalAlignment="Center"/>
+        </Grid>
+
+        <Border Grid.Row="1" Margin="0,12,0,0" CornerRadius="13" BorderBrush="#2E536F" BorderThickness="1" Background="#8E0F0D1A" Padding="10,9">
+            <UniformGrid Columns="4">
+                <Border Margin="0,0,8,0" CornerRadius="10" BorderBrush="#2E536F" BorderThickness="1" Background="#132433" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtCpuPeakLabel" Text="CPU LOAD" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtCpuPeak" Text="PEAK 0%" Foreground="#D6E6F5" FontFamily="Bahnschrift" FontSize="17" FontWeight="Bold" Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Margin="0,0,8,0" CornerRadius="10" BorderBrush="#2E536F" BorderThickness="1" Background="#132433" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtRamPeakLabel" Text="RAM LOAD" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtRamPeak" Text="PEAK 0%" Foreground="#D6E6F5" FontFamily="Bahnschrift" FontSize="17" FontWeight="Bold" Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border Margin="0,0,8,0" CornerRadius="10" BorderBrush="#2E536F" BorderThickness="1" Background="#132433" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtDiskPeakLabel" Text="DISK LOAD" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtDiskPeak" Text="PEAK 0%" Foreground="#D6E6F5" FontFamily="Bahnschrift" FontSize="17" FontWeight="Bold" Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+                <Border CornerRadius="10" BorderBrush="#2E536F" BorderThickness="1" Background="#132433" Padding="10,8">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtHeartbeatLabel" Text="HEARTBEAT" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtHeartbeat" Text="--:--:--" Foreground="#D6E6F5" FontFamily="Bahnschrift" FontSize="17" FontWeight="Bold" Margin="0,3,0,0"/>
+                    </StackPanel>
+                </Border>
+            </UniformGrid>
+        </Border>
+
+        <Grid Grid.Row="2" Margin="0,12,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="14"/>
+                <ColumnDefinition Width="350"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="12"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="12"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <Border Grid.Row="0" Grid.Column="0" CornerRadius="13" BorderBrush="#2E536F" BorderThickness="1" Background="#960F0C1B" Padding="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <TextBlock x:Name="TxtCpuLabel" Text="CPU" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock x:Name="CpuValueText" Grid.Column="1" Text="0%" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="22" FontWeight="Bold"/>
+                        </Grid>
+                        <ProgressBar x:Name="CpuUsageBar" Grid.Row="1" Style="{StaticResource PurpleBar}" Height="5" Margin="0,10,0,0" Maximum="100" Value="0"/>
+                        <Border Grid.Row="2" Background="#122131" BorderBrush="#274054" BorderThickness="1" CornerRadius="9" Margin="0,10,0,0">
+                            <Canvas x:Name="CpuGraphCanvas" Margin="8">
+                                <Polyline x:Name="CpuGraphLine" Stroke="#B695FF" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                            </Canvas>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="0" Grid.Column="2" CornerRadius="13" BorderBrush="#2E536F" BorderThickness="1" Background="#960F0C1B" Padding="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <TextBlock x:Name="TxtRamLabel" Text="RAM" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock x:Name="RamValueText" Grid.Column="1" Text="0%" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="22" FontWeight="Bold"/>
+                        </Grid>
+                        <ProgressBar x:Name="RamUsageBar" Grid.Row="1" Style="{StaticResource PurpleBar}" Height="5" Margin="0,10,0,0" Maximum="100" Value="0"/>
+                        <Border Grid.Row="2" Background="#122131" BorderBrush="#274054" BorderThickness="1" CornerRadius="9" Margin="0,10,0,0">
+                            <Canvas x:Name="RamGraphCanvas" Margin="8">
+                                <Polyline x:Name="RamGraphLine" Stroke="#A78DE7" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                            </Canvas>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="2" Grid.Column="0" CornerRadius="13" BorderBrush="#2E536F" BorderThickness="1" Background="#960F0C1B" Padding="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <TextBlock x:Name="TxtDiskLabel" Text="DISK" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock x:Name="DiskValueText" Grid.Column="1" Text="0%" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="22" FontWeight="Bold"/>
+                        </Grid>
+                        <ProgressBar x:Name="DiskUsageBar" Grid.Row="1" Style="{StaticResource PurpleBar}" Height="5" Margin="0,10,0,0" Maximum="100" Value="0"/>
+                        <Border Grid.Row="2" Background="#122131" BorderBrush="#274054" BorderThickness="1" CornerRadius="9" Margin="0,10,0,0">
+                            <Canvas x:Name="DiskGraphCanvas" Margin="8">
+                                <Polyline x:Name="DiskGraphLine" Stroke="#CDB7E8" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                            </Canvas>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Border Grid.Row="2" Grid.Column="2" CornerRadius="13" BorderBrush="#2E536F" BorderThickness="1" Background="#960F0C1B" Padding="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+                            <TextBlock x:Name="TxtNetworkLabel" Text="NETWORK" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                            <TextBlock x:Name="NetworkValueText" Grid.Column="1" Text="0 Mbps" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="22" FontWeight="Bold"/>
+                        </Grid>
+                        <ProgressBar x:Name="NetworkUsageBar" Grid.Row="1" Style="{StaticResource PurpleBar}" Height="5" Margin="0,10,0,0" Maximum="100" Value="0"/>
+                        <Border Grid.Row="2" Background="#122131" BorderBrush="#274054" BorderThickness="1" CornerRadius="9" Margin="0,10,0,0">
+                            <Canvas x:Name="NetworkGraphCanvas" Margin="8">
+                                <Polyline x:Name="NetworkGraphLine" Stroke="#7CE7C9" StrokeThickness="2.3" StrokeLineJoin="Round" StrokeStartLineCap="Round" StrokeEndLineCap="Round"/>
+                            </Canvas>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <Border Grid.Column="2" CornerRadius="13" BorderBrush="#2E536F" BorderThickness="1" Background="#980E0B19" Padding="0">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="14">
+                        <TextBlock x:Name="TxtInfoTitle" Text="SYSTEM SNAPSHOT" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtLiveStatus" Text="Live telemetry active" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
+
+                        <Border Margin="0,12,0,0" CornerRadius="11" BorderBrush="#2E536F" BorderThickness="1" Background="#122131" Padding="12,10">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel>
+                                    <TextBlock x:Name="TxtScoreLabel" Text="PERFORMANCE SCORE" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtPerfState" Text="STABLE" Foreground="#C8D6E5" FontSize="10" FontWeight="SemiBold" Margin="0,6,0,0"/>
+                                </StackPanel>
+                                <Border Grid.Column="1" CornerRadius="11" BorderBrush="#4E7C9A" BorderThickness="1" Background="#173244" Padding="12,8">
+                                    <TextBlock x:Name="TxtPerfScore" Text="100" Foreground="#F4F7FB" FontFamily="Bahnschrift" FontSize="26" FontWeight="Bold"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+
+                        <Border Margin="0,10,0,0" CornerRadius="11" BorderBrush="#2E536F" BorderThickness="1" Background="#122131" Padding="12,10">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtReadoutTitle" Text="LIVE READOUT" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <Grid Margin="0,10,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="TxtCpuReadoutLabel" Text="CPU" Foreground="{StaticResource TextSecondary}" FontSize="10"/>
+                                    <TextBlock x:Name="TxtCpuReadoutValue" Grid.Column="1" Text="Balanced" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                </Grid>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="TxtRamReadoutLabel" Text="RAM" Foreground="{StaticResource TextSecondary}" FontSize="10"/>
+                                    <TextBlock x:Name="TxtRamReadoutValue" Grid.Column="1" Text="Balanced" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                </Grid>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="TxtDiskReadoutLabel" Text="DISK" Foreground="{StaticResource TextSecondary}" FontSize="10"/>
+                                    <TextBlock x:Name="TxtDiskReadoutValue" Grid.Column="1" Text="Balanced" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                </Grid>
+                                <Grid Margin="0,8,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock x:Name="TxtNetworkReadoutLabel" Text="NETWORK" Foreground="{StaticResource TextSecondary}" FontSize="10"/>
+                                    <TextBlock x:Name="TxtNetworkReadoutValue" Grid.Column="1" Text="Quiet" Foreground="{StaticResource TextPrimary}" FontWeight="SemiBold"/>
+                                </Grid>
+                                <Rectangle Height="1" Fill="#2B2243" Margin="0,10,0,10"/>
+                                <TextBlock x:Name="TxtGuidanceLabel" Text="RECOMMENDED NEXT STEP" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtGuidanceValue" Text="System looks balanced right now." Foreground="{StaticResource TextPrimary}" FontSize="11" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Margin="0,10,0,0" CornerRadius="11" BorderBrush="#2E536F" BorderThickness="1" Background="#122131" Padding="12,10">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtCpuInfoLabel" Text="CPU MODEL" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtCpuInfoValue" Text="-" Foreground="{StaticResource TextPrimary}" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                <Rectangle Height="1" Fill="#2B2243" Margin="0,8,0,8"/>
+                                <TextBlock x:Name="TxtGpuInfoLabel" Text="GPU MODEL" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtGpuInfoValue" Text="-" Foreground="{StaticResource TextPrimary}" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                <Rectangle Height="1" Fill="#2B2243" Margin="0,8,0,8"/>
+                                <TextBlock x:Name="TxtMemInfoLabel" Text="TOTAL MEMORY" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtMemInfoValue" Text="-" Foreground="{StaticResource TextPrimary}" FontSize="11" Margin="0,4,0,0"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Margin="0,10,0,0" CornerRadius="11" BorderBrush="#2E536F" BorderThickness="1" Background="#122131" Padding="12,10">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtProcLabel" Text="RUNNING PROCESSES" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtProcValue" Text="0" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" Margin="0,4,0,0"/>
+                                <TextBlock x:Name="TxtAdapterLabel" Text="ACTIVE ADAPTER" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold" Margin="0,8,0,0"/>
+                                <TextBlock x:Name="TxtAdapterValue" Text="-" Foreground="{StaticResource TextPrimary}" FontSize="11" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Margin="0,10,0,0" CornerRadius="11" BorderBrush="#2E536F" BorderThickness="1" Background="#122131" Padding="12,10">
+                            <StackPanel>
+                                <TextBlock x:Name="TxtCustomTitle" Text="CUSTOM PERFORMANCE TUNING" Foreground="{StaticResource TextSecondary}" FontSize="8" FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtCustomSubtitle" Text="Build your own fast profile without going into every advanced toggle." Foreground="{StaticResource TextPrimary}" FontSize="11" Margin="0,6,0,0" TextWrapping="Wrap"/>
+                                <CheckBox x:Name="CbCustomPower" Margin="0,12,0,0" Style="{StaticResource SoftCheck}" Content="Power and CPU response"/>
+                                <CheckBox x:Name="CbCustomLatency" Margin="0,8,0,0" Style="{StaticResource SoftCheck}" Content="Game and input latency"/>
+                                <CheckBox x:Name="CbCustomNetwork" Margin="0,8,0,0" Style="{StaticResource SoftCheck}" Content="Network route cleanup"/>
+                                <CheckBox x:Name="CbCustomBackground" Margin="0,8,0,0" Style="{StaticResource SoftCheck}" Content="Background service trim"/>
+                                <CheckBox x:Name="CbCustomVisual" Margin="0,8,0,0" Style="{StaticResource SoftCheck}" Content="UI and startup cleanup"/>
+                                <CheckBox x:Name="CbCustomRestore" Margin="0,10,0,0" Style="{StaticResource SoftCheck}" Content="Create restore point before apply" IsChecked="True"/>
+                                <Button x:Name="BtnApplyCustom" Margin="0,12,0,0" Height="38" Style="{StaticResource PrimaryBtn}" Click="ApplyCustom_Click" Content="APPLY CUSTOM TUNING"/>
+                                <TextBlock x:Name="TxtCustomStatus" Text="Waiting for your custom selection." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,8,0,0" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Border>
+        </Grid>
+    </Grid>
+</Page>
+

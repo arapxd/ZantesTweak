@@ -1,0 +1,379 @@
+<Window x:Class="ZantesEngine.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="1000"
+        Height="620"
+        MinWidth="920"
+        MinHeight="560"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Icon="appicon.ico"
+        WindowStartupLocation="CenterScreen"
+        ShowInTaskbar="False"
+        Topmost="False">
+
+    <Border CornerRadius="24"
+            BorderBrush="#4D3C67"
+            BorderThickness="1"
+            ClipToBounds="True">
+        <Grid x:Name="Root" Background="#05050A">
+            <Grid.Resources>
+                <LinearGradientBrush x:Key="PanelFill" StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Color="#100F17" Offset="0"/>
+                    <GradientStop Color="#16131E" Offset="1"/>
+                </LinearGradientBrush>
+
+                <Style x:Key="BootPurpleBar" TargetType="ProgressBar">
+                    <Setter Property="Height" Value="5"/>
+                    <Setter Property="Background" Value="#1C1727"/>
+                    <Setter Property="Foreground" Value="#B695FF"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ProgressBar">
+                                <Grid>
+                                    <Border Background="{TemplateBinding Background}" CornerRadius="4"/>
+                                    <Border x:Name="PART_Indicator"
+                                            Background="{TemplateBinding Foreground}"
+                                            HorizontalAlignment="Left"
+                                            CornerRadius="4"/>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Grid.Resources>
+
+            <Rectangle>
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#05050A" Offset="0"/>
+                        <GradientStop Color="#0B0910" Offset="0.55"/>
+                        <GradientStop Color="#13111B" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Image Source="banner.png"
+                   Width="940"
+                   Stretch="Uniform"
+                   Opacity="0.1"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center"
+                   Margin="0,16,0,0"
+                   IsHitTestVisible="False"/>
+
+            <Rectangle x:Name="BeamTopLeft"
+                       Width="1040"
+                       Height="1040"
+                       HorizontalAlignment="Left"
+                       VerticalAlignment="Top"
+                       Margin="-620,-650,0,0"
+                       Opacity="0">
+                <Rectangle.Fill>
+                    <RadialGradientBrush Center="0.12,0.12" RadiusX="0.72" RadiusY="0.72">
+                        <GradientStop Color="#7B5AA8" Offset="0"/>
+                        <GradientStop Color="#3B2C67" Offset="0.38"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </RadialGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+
+            <Ellipse Width="520"
+                     Height="520"
+                     HorizontalAlignment="Right"
+                     VerticalAlignment="Bottom"
+                     Margin="0,0,-160,-180"
+                     Opacity="0.22"
+                     IsHitTestVisible="False">
+                <Ellipse.Fill>
+                    <RadialGradientBrush>
+                        <GradientStop Color="#553A2A67" Offset="0"/>
+                        <GradientStop Color="#003A2A67" Offset="1"/>
+                    </RadialGradientBrush>
+                </Ellipse.Fill>
+            </Ellipse>
+
+            <Canvas x:Name="ParticleCanvas" IsHitTestVisible="False"/>
+
+            <Border x:Name="ContentPanel"
+                    Width="888"
+                    Height="500"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    CornerRadius="30"
+                    Padding="1"
+                    Opacity="0">
+                <Border.RenderTransform>
+                    <TranslateTransform Y="24"/>
+                </Border.RenderTransform>
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#6F5A94" Offset="0"/>
+                        <GradientStop Color="#322747" Offset="0.56"/>
+                        <GradientStop Color="#1E1A28" Offset="1"/>
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Border.Effect>
+                    <DropShadowEffect Color="#1D1628" BlurRadius="36" ShadowDepth="0" Opacity="0.42"/>
+                </Border.Effect>
+
+                <Border CornerRadius="29" Background="{StaticResource PanelFill}" Padding="26">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="320"/>
+                            <ColumnDefinition Width="22"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.ColumnSpan="3"
+                                CornerRadius="26"
+                                Background="#80100E17"/>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <Border Width="108"
+                                    Height="108"
+                                    CornerRadius="24"
+                                    Background="#171320"
+                                    BorderBrush="#5E4A7F"
+                                    BorderThickness="1"
+                                    ClipToBounds="True"
+                                    HorizontalAlignment="Left">
+                                <Image Source="unnamed.jpg"
+                                       Stretch="UniformToFill"
+                                       RenderOptions.BitmapScalingMode="HighQuality"/>
+                            </Border>
+
+                            <StackPanel Grid.Row="1" Margin="0,20,0,0">
+                                <TextBlock x:Name="TxtSplashLayerLabel" Text="SYSTEM LAYER"
+                                           Foreground="#B6A7D1"
+                                           FontSize="10"
+                                           FontWeight="SemiBold"/>
+
+                                <Border x:Name="FirstBootBadge"
+                                        Background="#221B31"
+                                        BorderBrush="#6F5A94"
+                                        BorderThickness="1"
+                                        CornerRadius="10"
+                                        Padding="10,4"
+                                        Margin="0,10,0,0"
+                                        HorizontalAlignment="Left"
+                                        Visibility="Collapsed">
+                                    <TextBlock x:Name="TxtSplashFirstBootLabel" Text="FIRST BOOT EXPERIENCE"
+                                               Foreground="#E7DEF8"
+                                               FontSize="9"
+                                               FontWeight="Bold"/>
+                                </Border>
+
+                                <TextBlock Text="ZANTES TWEAK"
+                                           Foreground="#F6F1FB"
+                                           FontSize="40"
+                                           FontWeight="Bold"
+                                           FontFamily="Bahnschrift"
+                                           Margin="0,12,0,0"/>
+                                <TextBlock x:Name="TxtSplashSubtitle" Text="Launch Core"
+                                           Foreground="#AE95DC"
+                                           FontSize="22"
+                                           FontWeight="SemiBold"
+                                           FontFamily="Bahnschrift"
+                                           Margin="0,-6,0,0"/>
+                            </StackPanel>
+
+                            <TextBlock x:Name="TxtSplashDesc" Grid.Row="2"
+                                       Margin="0,20,16,0"
+                                       VerticalAlignment="Top"
+                                       Text="Startup layer syncs modules, verifies session state and prepares the interface shell before the dashboard opens."
+                                       Foreground="#BFB5CF"
+                                       FontSize="11"
+                                       TextWrapping="Wrap"/>
+
+                            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                                <Border Width="24"
+                                        Height="24"
+                                        CornerRadius="8"
+                                        ClipToBounds="True"
+                                        Background="#191422"
+                                        BorderBrush="#574674"
+                                        BorderThickness="1">
+                                    <Image Source="unnamed.jpg"
+                                           Stretch="UniformToFill"
+                                           RenderOptions.BitmapScalingMode="HighQuality"/>
+                                </Border>
+                                <TextBlock x:Name="TxtSplashBrand"
+                                           Text="MADE BY ARAP"
+                                           Margin="10,0,0,0"
+                                           VerticalAlignment="Center"
+                                           Foreground="#A48FCA"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Border Grid.Column="2"
+                                CornerRadius="24"
+                                Background="#171320"
+                                BorderBrush="#4A3A64"
+                                BorderThickness="1"
+                                Padding="22"
+                                ClipToBounds="True">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Rectangle Grid.RowSpan="5"
+                                           Opacity="0.16"
+                                           IsHitTestVisible="False">
+                                    <Rectangle.Fill>
+                                        <ImageBrush ImageSource="banner.png"
+                                                    Stretch="UniformToFill"
+                                                    ViewboxUnits="RelativeToBoundingBox"
+                                                    Viewbox="0.28,0.02,0.44,0.96"
+                                                    AlignmentX="Center"
+                                                    AlignmentY="Center"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+
+                                <Rectangle Grid.RowSpan="5" IsHitTestVisible="False">
+                                    <Rectangle.Fill>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="#D6131018" Offset="0"/>
+                                            <GradientStop Color="#C715121D" Offset="0.52"/>
+                                            <GradientStop Color="#D915111C" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+
+                                <TextBlock x:Name="TxtSplashDeployLabel" Text="DEPLOYMENT CORE"
+                                           Foreground="#B6A7D1"
+                                           FontSize="10"
+                                           FontWeight="SemiBold"/>
+
+                                <TextBlock x:Name="BootStatus"
+                                           Grid.Row="1"
+                                           Text="Preparing startup sequence..."
+                                           Margin="0,10,0,0"
+                                           Foreground="#F5F1FA"
+                                           FontSize="28"
+                                           FontWeight="Bold"
+                                           FontFamily="Bahnschrift"
+                                           TextWrapping="Wrap"/>
+
+                                <StackPanel Grid.Row="2" Margin="0,18,0,0">
+                                    <TextBlock x:Name="BootHint"
+                                               Text="Validating environment"
+                                               Foreground="#BCB4CA"
+                                               FontSize="12"/>
+                                    <TextBlock x:Name="BootModeHint"
+                                               Text="Standard startup mode"
+                                               Margin="0,5,0,0"
+                                               Foreground="#7E7690"
+                                               FontSize="10"/>
+                                </StackPanel>
+
+                                <UniformGrid Grid.Row="3" Columns="2" Margin="0,24,0,0">
+                                    <Border Margin="0,0,10,0"
+                                            Padding="14"
+                                            CornerRadius="18"
+                                            Background="#140F1B"
+                                            BorderBrush="#3A2E4E"
+                                            BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock x:Name="TxtSplashShellLabel" Text="SHELL"
+                                                       Foreground="#7E7690"
+                                                       FontSize="10"
+                                                       FontWeight="Bold"/>
+                                            <TextBlock x:Name="TxtSplashShellValue" Text="Arming"
+                                                       Margin="0,6,0,0"
+                                                       Foreground="#F5F1FA"
+                                                       FontSize="22"
+                                                       FontFamily="Bahnschrift"
+                                                       FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <Border Padding="14"
+                                            CornerRadius="18"
+                                            Background="#140F1B"
+                                            BorderBrush="#3A2E4E"
+                                            BorderThickness="1">
+                                        <StackPanel>
+                                            <TextBlock x:Name="TxtSplashProfileLabel" Text="PROFILE"
+                                                       Foreground="#7E7690"
+                                                       FontSize="10"
+                                                       FontWeight="Bold"/>
+                                            <TextBlock x:Name="TxtSplashProfileValue" Text="Syncing"
+                                                       Margin="0,6,0,0"
+                                                       Foreground="#F5F1FA"
+                                                       FontSize="22"
+                                                       FontFamily="Bahnschrift"
+                                                       FontWeight="Bold"/>
+                                        </StackPanel>
+                                    </Border>
+                                </UniformGrid>
+
+                                <StackPanel Grid.Row="4" Margin="0,22,0,0">
+                                    <ProgressBar x:Name="BootProgress"
+                                                 Style="{StaticResource BootPurpleBar}"
+                                                 Value="5"
+                                                 Maximum="100"/>
+
+                                    <Grid Margin="0,10,0,0">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <StackPanel Orientation="Horizontal">
+                                            <Ellipse x:Name="Dot"
+                                                     Width="7"
+                                                     Height="7"
+                                                     Fill="#B695FF"
+                                                     VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="TxtSplashLoadingModules" Text="  Loading dashboard modules"
+                                                       Foreground="#BFB5CF"
+                                                       FontSize="10"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+
+                                        <TextBlock x:Name="BootPercent"
+                                                   Grid.Column="1"
+                                                   Text="5%"
+                                                   Foreground="#B6A7D1"
+                                                   FontSize="10"
+                                                   FontWeight="SemiBold"/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Border>
+            </Border>
+
+            <Rectangle x:Name="BottomLine" Height="1" VerticalAlignment="Bottom" Opacity="0">
+                <Rectangle.Fill>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="Transparent" Offset="0"/>
+                        <GradientStop Color="#7F699F" Offset="0.34"/>
+                        <GradientStop Color="#B695FF" Offset="0.5"/>
+                        <GradientStop Color="#7F699F" Offset="0.66"/>
+                        <GradientStop Color="Transparent" Offset="1"/>
+                    </LinearGradientBrush>
+                </Rectangle.Fill>
+            </Rectangle>
+        </Grid>
+    </Border>
+</Window>

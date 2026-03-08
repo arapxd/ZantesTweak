@@ -1,0 +1,30 @@
+Zantes Tweak Proprietary License
+Copyright (c) 2026 Arap. All rights reserved.
+
+This repository and all source code, binaries, assets, scripts, configuration,
+design elements, names, logos, and related materials for Zantes Tweak are
+proprietary and confidential, except where a third-party component is
+distributed under its own license.
+
+No permission is granted to use, copy, modify, merge, publish, sublicense,
+sell, distribute, reverse engineer for redistribution, or create derivative
+works from any part of this software or repository without prior written
+permission from the copyright holder.
+
+Viewing this source code on a public repository does not grant any license to
+use it beyond the limited right to access and review it for reference.
+
+You may not:
+- copy or reuse the source code in your own project;
+- redistribute modified or unmodified versions;
+- rebrand the software or assets;
+- sell, lease, sublicense, or commercially exploit the software;
+- publish forks for use, redistribution, or derivative development.
+
+Any unauthorized use, copying, redistribution, or derivative work is strictly
+prohibited and may result in legal action.
+
+The software is provided "as is", without warranty of any kind, to the maximum
+extent permitted by law.
+
+For licensing requests or written permission, contact the copyright holder.
