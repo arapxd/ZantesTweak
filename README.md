@@ -121,15 +121,23 @@ Tarama sirasinda, heuristic veya machine-learning tabanli bazi motorlar gercek b
 
 - Public VirusTotal report:
   [VirusTotal scan result](https://www.virustotal.com/gui/file/ec95a1160b080d7d68030e116520f1dee8a8ce66527d24b6b1b096f5b84649eb/detection)
+- Release installer SHA256:
+  `EC95A1160B080D7D68030E116520F1DEE8A8CE66527D24B6B1B096F5B84649EB`
 - Local Windows Defender scan on the release installer completed with no threats found
 - Public VirusTotal results may still show isolated heuristic detections from individual vendors
 - If a release shows a detection from only one or a very small number of engines, it may be a false positive rather than a confirmed malicious verdict
 
 - Public VirusTotal raporu:
   [VirusTotal tarama sonucu](https://www.virustotal.com/gui/file/ec95a1160b080d7d68030e116520f1dee8a8ce66527d24b6b1b096f5b84649eb/detection)
+- Release installer SHA256 degeri:
+  `EC95A1160B080D7D68030E116520F1DEE8A8CE66527D24B6B1B096F5B84649EB`
 - Release installer dosyasi yerelde Windows Defender ile tarandi ve tehdit bulunmadi
 - Public VirusTotal sonuclarinda tekil vendor bazli heuristic alarmlar gorulebilir
 - Tek motor veya cok az sayida motor tarafindan gelen isaretleme, dogrulanmis zararli sonuc yerine false positive olabilir
+
+SHA256 hash, indirilen dosyanin degistirilip degistirilmedigini kontrol etmek icin kullanilir. Kullanicilar kendi indirdikleri dosyanin hash degerini bu deger ile karsilastirarak ayni dosyayi indirip indirmediklerini anlayabilir.
+
+The SHA256 hash is used to verify that the downloaded file has not been modified. Users can compare the hash of their downloaded installer with the published value to confirm file integrity.
 
 Users who want to verify a release themselves should:
 
