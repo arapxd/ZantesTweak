@@ -4,9 +4,9 @@ Zantes Tweak is a branded Windows optimization suite focused on practical perfor
 
 The project is built as a WPF desktop app and shipped through versioned installers. Public releases are intended to be consumed through GitHub Releases and the in-app update channel.
 
-## Turkce Ozet
+## Turkce
 
-Zantes Tweak; sistem optimizasyonu, canli performans izleme, benchmark, Discord oturum entegrasyonu ve release tabanli masaustu dagitimi icin hazirlanmis bir Windows tweak uygulamasidir.
+Zantes Tweak; sistem optimizasyonu, canli performans izleme, benchmark, Discord oturum entegrasyonu ve surumlu masaustu dagitimi icin hazirlanmis bir Windows tweak uygulamasidir.
 
 - Modern WPF arayuz
 - Profil tabanli tweak ve temizlik akislari
@@ -14,7 +14,21 @@ Zantes Tweak; sistem optimizasyonu, canli performans izleme, benchmark, Discord 
 - GitHub Releases tabanli guncelleme sistemi
 - Installer ve surumlu dagitim akisi
 
+Indirme ve guncelleme dagitimi GitHub Releases uzerinden yapilir. Kurulum dosyalari release sayfasinda paylasilir.
+
 Bu depo public olarak gorunur, ancak kodlar acik kaynak degildir. Kodun kopyalanmasi, yeniden kullanimi, dagitimi veya satilmasi lisans disidir.
+
+## English
+
+Zantes Tweak is a Windows optimization suite built for system tuning, live telemetry, benchmarking, Discord session integration, and versioned desktop delivery.
+
+- Modern WPF interface
+- Profile-based tweak and cleanup flows
+- Live telemetry and benchmark comparison
+- GitHub Releases based update delivery
+- Installer-based distribution flow
+
+Downloads and updates are delivered through GitHub Releases. Public installers are intended to be shared from the release page.
 
 ## Highlights
 
@@ -53,31 +67,6 @@ This repository is public for visibility, not for reuse.
 
 If you want the code to remain legally protected while still visible, this is the intended model. If you want the code to be unreadable as well, the repository must be private.
 
-## Requirements
-
-- Windows 10/11
-- .NET 8 SDK
-- Inno Setup 6 for installer compilation
-- Administrator privileges for most system tweak operations
-
-## Local Build
-
-```powershell
-dotnet build .\ZantesEngine\ZantesEngine.csproj
-```
-
-## Release Build
-
-```powershell
-powershell -ExecutionPolicy Bypass -File .\scripts\build-release-package.ps1
-```
-
-Installer output:
-
-```text
-release\installer\ZantesTweak-Setup-<version>.exe
-```
-
 ## Update Channel
 
 The app checks the latest public release from GitHub Releases.
@@ -89,13 +78,9 @@ The app checks the latest public release from GitHub Releases.
 
 No GitHub access token is stored in the app for update checks.
 
-## Release Flow
+## Release Notes
 
-1. Update `<Version>` in `ZantesEngine/ZantesEngine.csproj`
-2. Run the release packaging script
-3. Create a GitHub release with tag `vX.Y.Z`
-4. Upload the generated installer asset
-5. Users can update from the GitHub release page or the in-app updater section
+New public builds are expected to be published through the GitHub Releases page for this repository. Users should download installers from the release section instead of using repository source files directly.
 
 ## Notes
 
