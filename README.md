@@ -2,7 +2,21 @@
 
 Zantes Tweak is a branded Windows optimization suite focused on practical performance cleanup, profile-based tuning, live telemetry, benchmarking, Discord-backed session UX, and release-driven desktop delivery.
 
-The project is built as a WPF desktop app and shipped through versioned installers. Public releases are intended to be consumed through GitHub Releases and the in-app update channel.
+The project is built as a WPF desktop app and distributed through versioned installers on GitHub Releases.
+
+## Download
+
+- Releases: [github.com/arapxd/ZantesTweak/releases](https://github.com/arapxd/ZantesTweak/releases)
+- Repository: [github.com/arapxd/ZantesTweak](https://github.com/arapxd/ZantesTweak)
+
+## Core Features
+
+- Dashboard-based system tuning flow
+- Quick Boost and advanced optimizer profiles
+- Live performance telemetry and readable guidance
+- Benchmark capture with before/after comparison
+- Discord session integration and Rich Presence
+- GitHub Releases based update channel
 
 ## Turkce
 
@@ -18,7 +32,7 @@ Indirme ve guncelleme dagitimi GitHub Releases uzerinden yapilir. Kurulum dosyal
 
 Bu depo public olarak gorunur, ancak kodlar acik kaynak degildir. Kodun kopyalanmasi, yeniden kullanimi, dagitimi veya satilmasi lisans disidir.
 
-## English
+## English Summary
 
 Zantes Tweak is a Windows optimization suite built for system tuning, live telemetry, benchmarking, Discord session integration, and versioned desktop delivery.
 
@@ -30,14 +44,15 @@ Zantes Tweak is a Windows optimization suite built for system tuning, live telem
 
 Downloads and updates are delivered through GitHub Releases. Public installers are intended to be shared from the release page.
 
-## Highlights
+## Modules
 
-- Modern WPF interface with dashboard, benchmark, performance monitor, quick boost, optimizer, network, and game tuner flows
-- Profile-driven tweak engine for system, network, latency, graphics, maintenance, and service cleanup
-- Discord sign-in session flow with avatar sync and Discord Rich Presence support
-- Live hardware telemetry, benchmark capture, before/after comparison, and user-readable performance guidance
-- GitHub Releases based update channel without embedding any GitHub secret token inside the app
-- Inno Setup based installer pipeline with versioned output and license screen
+- Dashboard
+- Quick Boost
+- Optimizer
+- Network
+- Performance Monitor
+- Benchmark Lab
+- Game Tuner
 
 ## Project Structure
 
@@ -78,7 +93,7 @@ The app checks the latest public release from GitHub Releases.
 
 No GitHub access token is stored in the app for update checks.
 
-## Release Notes
+## Public Release
 
 New public builds are expected to be published through the GitHub Releases page for this repository. Users should download installers from the release section instead of using repository source files directly.
 
