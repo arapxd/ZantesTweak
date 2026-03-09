@@ -6,10 +6,11 @@
         xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         mc:Ignorable="d"
         Title="Zantes Tweak"
-        Width="1520"
-        Height="920"
-        MinWidth="1260"
-        MinHeight="760"
+        Width="1360"
+        Height="840"
+        MinWidth="1120"
+        MinHeight="720"
+        WindowStartupLocation="CenterScreen"
         WindowStyle="None"
         ResizeMode="CanResize"
         Background="Transparent"
@@ -21,39 +22,104 @@
         MouseLeave="Window_MouseLeave">
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="0"
-                            CornerRadius="22"
+                            CornerRadius="24"
                             GlassFrameThickness="0"
                             ResizeBorderThickness="8"
                             UseAeroCaptionButtons="False"/>
     </shell:WindowChrome.WindowChrome>
 
+    <Window.Resources>
+        <Style x:Key="RailNavBtn" TargetType="RadioButton" BasedOn="{StaticResource NavBtn}">
+            <Setter Property="Height" Value="62"/>
+            <Setter Property="Margin" Value="0,0,0,8"/>
+        </Style>
+
+        <Style x:Key="ShellCard" TargetType="Border">
+            <Setter Property="CornerRadius" Value="24"/>
+            <Setter Property="Background" Value="#C11101A"/>
+            <Setter Property="BorderBrush" Value="#3E3052"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+
+        <Style x:Key="MutedChip" TargetType="Border">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Background" Value="#151520"/>
+            <Setter Property="BorderBrush" Value="#382B4B"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="12,8"/>
+        </Style>
+
+        <Style x:Key="SectionLabel" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+            <Setter Property="FontSize" Value="9"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+
+        <Style x:Key="DockNavProxy" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource TextMuted}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="Padding" Value="18,10,18,8"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border Background="Transparent"
+                                CornerRadius="18"
+                                Padding="{TemplateBinding Padding}">
+                            <StackPanel HorizontalAlignment="Center">
+                                <ContentPresenter HorizontalAlignment="Center"/>
+                                <Ellipse x:Name="SelectionDot"
+                                         Width="5"
+                                         Height="5"
+                                         Margin="0,8,0,0"
+                                         Fill="{StaticResource AccentPrimary}"
+                                         Opacity="0"/>
+                            </StackPanel>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Foreground" Value="{StaticResource TextPrimary}"/>
+                                <Setter TargetName="SelectionDot" Property="Opacity" Value="1"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
     <Grid Background="Transparent">
-        <Border CornerRadius="28" Margin="10" Background="{StaticResource WindowBackgroundGradient}">
+        <Border CornerRadius="28"
+                Margin="0"
+                Background="{StaticResource WindowBackgroundGradient}"
+                ClipToBounds="True">
             <Border.Effect>
-                <DropShadowEffect BlurRadius="32" ShadowDepth="0" Opacity="0.26" Color="#03070C"/>
+                <DropShadowEffect BlurRadius="42" ShadowDepth="0" Opacity="0.34" Color="#020207"/>
             </Border.Effect>
         </Border>
 
-        <Canvas x:Name="AmbientCanvas" Margin="10" IsHitTestVisible="False"/>
+        <Canvas x:Name="AmbientCanvas" Margin="0" IsHitTestVisible="False"/>
 
-        <Grid Margin="10">
-            <Image Source="pack://application:,,,/banner.png"
-                   Stretch="UniformToFill"
-                   Opacity="0.15"
-                   Margin="-40,-10,-40,-24"
-                   IsHitTestVisible="False"
-                   RenderOptions.BitmapScalingMode="HighQuality">
-                <Image.RenderTransform>
-                    <ScaleTransform ScaleX="1.08" ScaleY="1.08"/>
-                </Image.RenderTransform>
-            </Image>
+        <Grid Margin="0">
+            <Rectangle IsHitTestVisible="False"
+                       Opacity="0.68">
+                <Rectangle.Fill>
+                    <ImageBrush ImageSource="pack://application:,,,/banner.png"
+                                Stretch="UniformToFill"
+                                AlignmentX="Center"
+                                AlignmentY="Center"/>
+                </Rectangle.Fill>
+            </Rectangle>
 
             <Rectangle IsHitTestVisible="False">
                 <Rectangle.Fill>
-                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-                        <GradientStop Color="#A205050A" Offset="0"/>
-                        <GradientStop Color="#C7080810" Offset="0.45"/>
-                        <GradientStop Color="#DA12111A" Offset="1"/>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                        <GradientStop Color="#A8020203" Offset="0"/>
+                        <GradientStop Color="#92050508" Offset="0.34"/>
+                        <GradientStop Color="#8F090711" Offset="0.7"/>
+                        <GradientStop Color="#AE030305" Offset="1"/>
                     </LinearGradientBrush>
                 </Rectangle.Fill>
             </Rectangle>
@@ -62,34 +128,35 @@
                      Height="420"
                      HorizontalAlignment="Right"
                      VerticalAlignment="Top"
-                     Margin="0,-150,-80,0"
+                     Margin="0,-170,-130,0"
                      IsHitTestVisible="False">
                 <Ellipse.Fill>
                     <RadialGradientBrush>
-                        <GradientStop Color="#55422E72" Offset="0"/>
-                        <GradientStop Color="#003B2C67" Offset="1"/>
+                        <GradientStop Color="#2C5A33A0" Offset="0"/>
+                        <GradientStop Color="#001F1438" Offset="1"/>
                     </RadialGradientBrush>
                 </Ellipse.Fill>
             </Ellipse>
 
-            <Ellipse Width="360"
-                     Height="360"
+            <Ellipse Width="300"
+                     Height="300"
                      HorizontalAlignment="Left"
                      VerticalAlignment="Bottom"
-                     Margin="-140,0,0,-130"
+                     Margin="-120,0,0,-120"
                      IsHitTestVisible="False">
                 <Ellipse.Fill>
                     <RadialGradientBrush>
-                        <GradientStop Color="#44473662" Offset="0"/>
-                        <GradientStop Color="#004F3D69" Offset="1"/>
+                        <GradientStop Color="#25442882" Offset="0"/>
+                        <GradientStop Color="#00170D2E" Offset="1"/>
                     </RadialGradientBrush>
                 </Ellipse.Fill>
             </Ellipse>
 
-            <Border CornerRadius="28"
-                    Background="#D90E0D16"
-                    BorderBrush="#312940"
-                    BorderThickness="1">
+                    <Border CornerRadius="28"
+                            Background="#B10C0B14"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
+                            ClipToBounds="True">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="78"/>
@@ -98,24 +165,26 @@
 
                     <Border Grid.Row="0"
                             Margin="14,14,14,0"
-                            CornerRadius="20"
-                            Background="#C2141220"
-                            BorderBrush="#372D49"
-                            BorderThickness="1"
+                            CornerRadius="18"
+                            Background="#C7141320"
+                            BorderBrush="Transparent"
+                            BorderThickness="0"
                             MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
-                        <Grid Margin="18,0">
+                        <Grid Margin="20,0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="340"/>
+                                <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="132"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
 
                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                <Border Width="42"
-                                        Height="42"
-                                        CornerRadius="14"
-                                        ClipToBounds="True">
+                                <Border Width="46"
+                                        Height="46"
+                                        CornerRadius="16"
+                                        ClipToBounds="True"
+                                        BorderBrush="#5F4685"
+                                        BorderThickness="1">
                                     <Image Source="pack://application:,,,/unnamed.jpg"
                                            Stretch="UniformToFill"
                                            RenderOptions.BitmapScalingMode="HighQuality"/>
@@ -136,46 +205,11 @@
                                 </StackPanel>
                             </StackPanel>
 
-                            <StackPanel Grid.Column="1"
-                                        Orientation="Horizontal"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center">
-                                <StackPanel Orientation="Horizontal">
-                                    <Ellipse Width="8" Height="8" Fill="{StaticResource AccentPrimary}" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="TxtStatusStable"
-                                               Text="SYSTEM STABLE"
-                                               Margin="8,0,16,0"
-                                               Foreground="{StaticResource TextPrimary}"
-                                               FontSize="10"
-                                               FontWeight="SemiBold"
-                                               VerticalAlignment="Center"/>
-                                    <Ellipse Width="8" Height="8" Fill="#A78DE7" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="TxtStatusDiscord"
-                                               Text="DISCORD READY"
-                                               Margin="8,0,16,0"
-                                               Foreground="{StaticResource TextPrimary}"
-                                               FontSize="10"
-                                               FontWeight="SemiBold"
-                                               VerticalAlignment="Center"/>
-                                    <Ellipse Width="8" Height="8" Fill="#CDB7E8" VerticalAlignment="Center"/>
-                                    <TextBlock x:Name="TxtStatusAuthorized"
-                                               Text="AUTHORIZED BY ZANTES"
-                                               Margin="8,0,0,0"
-                                               Foreground="{StaticResource TextPrimary}"
-                                               FontSize="10"
-                                               FontWeight="SemiBold"
-                                               VerticalAlignment="Center"/>
-                                </StackPanel>
-                            </StackPanel>
-
-                            <Border Grid.Column="2"
-                                    Margin="0,12,18,12"
-                                    Padding="14,0"
-                                    CornerRadius="16"
-                                    Background="#141520"
-                                    BorderBrush="#372D49"
-                                    BorderThickness="1"
-                                    VerticalAlignment="Stretch">
+                            <Border Grid.Column="1"
+                                    Style="{StaticResource MutedChip}"
+                                    Margin="20,12,14,12"
+                                    VerticalAlignment="Stretch"
+                                    Visibility="Collapsed">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
@@ -190,11 +224,32 @@
                                                    Foreground="{StaticResource TextSecondary}"
                                                    FontSize="9"
                                                    FontWeight="Bold"/>
-                                        <TextBlock x:Name="TxtBrandCredit"
-                                                   Text="MADE BY ARAP"
-                                                   Margin="0,2,0,0"
-                                                   Foreground="{StaticResource TextMuted}"
-                                                   FontSize="10"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                                            <Ellipse Width="7" Height="7" Fill="{StaticResource AccentPrimary}" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="TxtStatusStable"
+                                                       Text="SYSTEM STABLE"
+                                                       Margin="8,0,14,0"
+                                                       Foreground="{StaticResource TextPrimary}"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                            <Ellipse Width="7" Height="7" Fill="#A884EE" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="TxtStatusDiscord"
+                                                       Text="DISCORD READY"
+                                                       Margin="8,0,14,0"
+                                                       Foreground="{StaticResource TextPrimary}"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                            <Ellipse Width="7" Height="7" Fill="#D8CBF4" VerticalAlignment="Center"/>
+                                            <TextBlock x:Name="TxtStatusAuthorized"
+                                                       Text="AUTHORIZED BY ZANTES"
+                                                       Margin="8,0,0,0"
+                                                       Foreground="{StaticResource TextPrimary}"
+                                                       FontSize="10"
+                                                       FontWeight="SemiBold"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
                                     </StackPanel>
 
                                     <StackPanel Grid.Column="1" VerticalAlignment="Center">
@@ -206,7 +261,7 @@
                                                    Text="0.0%"
                                                    Foreground="{StaticResource TextPrimary}"
                                                    FontFamily="Bahnschrift"
-                                                   FontSize="19"
+                                                   FontSize="18"
                                                    FontWeight="Bold"
                                                    HorizontalAlignment="Right"/>
                                     </StackPanel>
@@ -220,12 +275,20 @@
                                                    Text="0.0%"
                                                    Foreground="{StaticResource TextPrimary}"
                                                    FontFamily="Bahnschrift"
-                                                   FontSize="19"
+                                                   FontSize="18"
                                                    FontWeight="Bold"
                                                    HorizontalAlignment="Right"/>
                                     </StackPanel>
                                 </Grid>
                             </Border>
+
+                            <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                <TextBlock x:Name="TxtBrandCredit"
+                                           Text="MADE BY ARAP"
+                                           Foreground="{StaticResource TextMuted}"
+                                           FontSize="10"
+                                           HorizontalAlignment="Right"/>
+                            </StackPanel>
 
                             <StackPanel Grid.Column="3"
                                         Orientation="Horizontal"
@@ -234,7 +297,7 @@
                                 <Button Style="{StaticResource WinBtn}" Click="BtnMin_Click">
                                     <TextBlock Text="&#xE921;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
                                 </Button>
-                                <Button x:Name="BtnMax" Style="{StaticResource WinBtn}" Click="BtnMax_Click" Margin="8,0,0,0">
+                                <Button x:Name="BtnMax" Style="{StaticResource WinBtn}" Click="BtnMax_Click" Margin="8,0,0,0" Visibility="Collapsed">
                                     <TextBlock Text="&#xE922;" FontFamily="Segoe MDL2 Assets" FontSize="10"/>
                                 </Button>
                                 <Button Style="{StaticResource CloseBtn}" Click="BtnClose_Click" Margin="8,0,0,0">
@@ -246,17 +309,18 @@
 
                     <Grid Grid.Row="1" Margin="14,14,14,14">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="320"/>
-                            <ColumnDefinition Width="16"/>
+                            <ColumnDefinition Width="0"/>
+                            <ColumnDefinition Width="0"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
                         
                         <Border Grid.Column="0"
-                                CornerRadius="24"
-                                Background="#BC10111A"
-                                BorderBrush="#382E4A"
+                                CornerRadius="26"
+                                Background="#C0101119"
+                                BorderBrush="#433259"
                                 BorderThickness="1"
-                                Padding="18">
+                                Padding="14"
+                                Visibility="Collapsed">
                             <Grid x:Name="SidebarPanel">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto"/>
@@ -266,9 +330,9 @@
                                 </Grid.RowDefinitions>
 
                                 <Border Grid.Row="0"
-                                        CornerRadius="20"
-                                        Background="#151623"
-                                        BorderBrush="#47395F"
+                                        CornerRadius="22"
+                                        Background="#171421"
+                                        BorderBrush="#4A3A62"
                                         BorderThickness="1"
                                         ClipToBounds="True">
                                     <Grid>
@@ -281,49 +345,43 @@
                                             </Rectangle.Fill>
                                         </Rectangle>
 
-                                        <Image Source="pack://application:,,,/banner.png"
-                                               Stretch="UniformToFill"
-                                               Opacity="0.08"
-                                               Margin="60,-16,-20,-16"
-                                               IsHitTestVisible="False"/>
+                                        <Rectangle Fill="#B60E0E18"/>
 
-                                        <Rectangle Fill="#B40E0E18"/>
-
-                                        <Rectangle VerticalAlignment="Bottom" Height="110">
+                                        <Rectangle VerticalAlignment="Bottom" Height="104">
                                             <Rectangle.Fill>
                                                 <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
                                                     <GradientStop Color="#0014141D" Offset="0"/>
-                                                    <GradientStop Color="#C8151422" Offset="1"/>
+                                                    <GradientStop Color="#D4141320" Offset="1"/>
                                                 </LinearGradientBrush>
                                             </Rectangle.Fill>
                                         </Rectangle>
 
                                         <TextBlock x:Name="AvatarFallbackText"
                                                    Text="?"
-                                                   Margin="0,-10,18,0"
+                                                   Margin="0,0,18,16"
                                                    HorizontalAlignment="Right"
-                                                   VerticalAlignment="Top"
-                                                   Foreground="#56EAF8FF"
+                                                   VerticalAlignment="Bottom"
+                                                   Foreground="#4CA56CFF"
                                                    FontFamily="Bahnschrift"
-                                                   FontSize="86"
+                                                   FontSize="64"
                                                    FontWeight="Bold"
-                                                   Opacity="0.2"/>
+                                                   Opacity="0.24"/>
 
-                                        <Grid Margin="18" VerticalAlignment="Bottom">
+                                        <Grid Margin="16">
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="74"/>
-                                                <ColumnDefinition Width="14"/>
+                                                <ColumnDefinition Width="68"/>
+                                                <ColumnDefinition Width="12"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
 
-                                            <Grid Width="74" Height="74" VerticalAlignment="Bottom">
+                                            <Grid Width="68" Height="68" VerticalAlignment="Center">
                                                 <Ellipse Fill="#A8121320"
-                                                         Stroke="#5F4B7A"
+                                                         Stroke="#6A4F93"
                                                          StrokeThickness="1"/>
                                                 <Ellipse x:Name="DiscordAvatar"
                                                          Margin="4"
                                                          Fill="#252131"
-                                                         Stroke="#8A72B6"
+                                                         Stroke="#A584DB"
                                                          StrokeThickness="1"/>
                                             </Grid>
 
@@ -335,21 +393,21 @@
                                                            FontWeight="Bold"/>
                                                 <TextBlock x:Name="AuthStatusText"
                                                            Text="LOCKED"
-                                                           Margin="0,4,0,0"
+                                                           Margin="0,6,0,0"
                                                            Foreground="{StaticResource TextPrimary}"
                                                            FontFamily="Bahnschrift"
-                                                           FontSize="22"
+                                                           FontSize="24"
                                                            FontWeight="Bold"/>
                                                 <TextBlock x:Name="TxtDiscordUserLabel"
                                                            Text="DISCORD USER"
-                                                           Margin="0,8,0,0"
+                                                           Margin="0,10,0,0"
                                                            Foreground="#B4A6CC"
                                                            FontSize="9"
                                                            FontWeight="Bold"/>
                                                 <TextBlock x:Name="TxtDiscordUserName"
                                                            Text="Not linked"
                                                            Foreground="{StaticResource TextPrimary}"
-                                                           FontSize="12"
+                                                           FontSize="13"
                                                            FontWeight="SemiBold"
                                                            TextWrapping="Wrap"/>
                                             </StackPanel>
@@ -357,33 +415,15 @@
                                     </Grid>
                                 </Border>
 
-                                <StackPanel Grid.Row="1" Margin="0,18,0,0">
-                                    <Border CornerRadius="20"
-                                            Background="#14141E"
-                                            BorderBrush="#47395F"
-                                            BorderThickness="1"
-                                            Padding="14">
-                                        <StackPanel>
-                                            <TextBlock x:Name="TxtLanguageLabel"
-                                                       Text="LANGUAGE"
-                                                       Foreground="{StaticResource TextMuted}"
-                                                       FontSize="9"
-                                                       FontWeight="Bold"/>
-                                            <ComboBox x:Name="LanguageSelector"
-                                                      Style="{StaticResource DarkCombo}"
-                                                      Margin="0,8,0,0"
-                                                      SelectionChanged="LanguageSelector_SelectionChanged">
-                                                <ComboBoxItem x:Name="LangEnItem" Tag="en" Content="English"/>
-                                                <ComboBoxItem x:Name="LangTrItem" Tag="tr" Content="Turkish"/>
-                                            </ComboBox>
-                                        </StackPanel>
-                                    </Border>
-                                </StackPanel>
+                                <Border Grid.Row="1"
+                                        Margin="0,14,0,0"
+                                        Height="0"
+                                        Visibility="Collapsed"/>
 
                                 <StackPanel Grid.Row="2" Margin="0,18,0,0">
                                     <RadioButton x:Name="NavDashboard"
                                                  Tag="dashboard"
-                                                 Style="{StaticResource NavBtn}"
+                                                 Style="{StaticResource RailNavBtn}"
                                                  Checked="Nav_Checked">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -401,16 +441,14 @@
                                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
                                                            FontWeight="Bold"
                                                            FontSize="12"/>
-                                                <TextBlock Text="Live status and recommended flow"
-                                                           Foreground="{StaticResource TextMuted}"
-                                                           FontSize="10"/>
                                             </StackPanel>
                                         </Grid>
                                     </RadioButton>
 
                                     <RadioButton x:Name="NavQuickBoost"
                                                  Tag="quickboost"
-                                                 Style="{StaticResource NavBtn}"
+                                                 Style="{StaticResource RailNavBtn}"
+                                                 Visibility="Collapsed"
                                                  Margin="0,4,0,0"
                                                  Checked="Nav_Checked">
                                         <Grid>
@@ -438,7 +476,8 @@
 
                                     <RadioButton x:Name="NavOptimizer"
                                                  Tag="optimizer"
-                                                 Style="{StaticResource NavBtn}"
+                                                 Style="{StaticResource RailNavBtn}"
+                                                 Visibility="Collapsed"
                                                  Margin="0,4,0,0"
                                                  Checked="Nav_Checked">
                                         <Grid>
@@ -466,7 +505,7 @@
 
                                     <RadioButton x:Name="NavGameTuner"
                                                  Tag="tuner"
-                                                 Style="{StaticResource NavBtn}"
+                                                 Style="{StaticResource RailNavBtn}"
                                                  Margin="0,4,0,0"
                                                  Checked="Nav_Checked">
                                         <Grid>
@@ -485,16 +524,13 @@
                                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
                                                            FontWeight="Bold"
                                                            FontSize="12"/>
-                                                <TextBlock Text="Per-title profiles and presets"
-                                                           Foreground="{StaticResource TextMuted}"
-                                                           FontSize="10"/>
                                             </StackPanel>
                                         </Grid>
                                     </RadioButton>
 
                                     <RadioButton x:Name="NavNetwork"
                                                  Tag="network"
-                                                 Style="{StaticResource NavBtn}"
+                                                 Style="{StaticResource RailNavBtn}"
                                                  Margin="0,4,0,0"
                                                  Checked="Nav_Checked">
                                         <Grid>
@@ -513,16 +549,14 @@
                                                            Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
                                                            FontWeight="Bold"
                                                            FontSize="12"/>
-                                                <TextBlock Text="Low-latency route and spike guard"
-                                                           Foreground="{StaticResource TextMuted}"
-                                                           FontSize="10"/>
                                             </StackPanel>
                                         </Grid>
                                     </RadioButton>
 
                                     <RadioButton x:Name="NavPerformance"
                                                  Tag="performance"
-                                                 Style="{StaticResource NavBtn}"
+                                                 Style="{StaticResource RailNavBtn}"
+                                                 Visibility="Collapsed"
                                                  Margin="0,4,0,0"
                                                  Checked="Nav_Checked">
                                         <Grid>
@@ -550,7 +584,8 @@
 
                                     <RadioButton x:Name="NavBenchmark"
                                                  Tag="benchmark"
-                                                 Style="{StaticResource NavBtn}"
+                                                 Style="{StaticResource RailNavBtn}"
+                                                 Visibility="Collapsed"
                                                  Margin="0,4,0,0"
                                                  Checked="Nav_Checked">
                                         <Grid>
@@ -578,48 +613,155 @@
                                 </StackPanel>
 
                                 <Border Grid.Row="3"
-                                        Margin="0,18,0,0"
+                                        Margin="0,14,0,0"
                                         CornerRadius="20"
                                         Background="#151623"
                                         BorderBrush="#47395F"
                                         BorderThickness="1"
-                                        Padding="16">
-                                    <DockPanel LastChildFill="False">
-                                        <StackPanel DockPanel.Dock="Left" Width="150">
-                                            <TextBlock x:Name="TxtSidebarTip"
-                                                       Text="Run as Administrator for full tweak effects."
-                                                       Foreground="{StaticResource TextSecondary}"
-                                                       FontSize="11"
-                                                       TextWrapping="Wrap"/>
-                                        </StackPanel>
-                                        <Button DockPanel.Dock="Right"
-                                                Margin="12,0,0,0"
+                                        Padding="14">
+                                    <Grid>
+                                        <TextBlock x:Name="TxtSidebarTip"
+                                                   Text="Run as Administrator for full tweak effects."
+                                                   Foreground="{StaticResource TextSecondary}"
+                                                   FontSize="11"
+                                                   TextWrapping="Wrap"
+                                                   Visibility="Collapsed"/>
+                                        <Button HorizontalAlignment="Stretch"
                                                 Style="{StaticResource GhostBtn}"
                                                 Click="BtnOpenSettings_Click">
-                                            <StackPanel Orientation="Horizontal">
+                                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                                 <TextBlock Text="&#xE713;"
                                                            FontFamily="Segoe MDL2 Assets"
                                                            FontSize="11"
                                                            Margin="0,0,8,0"/>
-                                                <TextBlock x:Name="TxtSettingsButton"
-                                                           Text="SETTINGS"
-                                                           FontWeight="SemiBold"/>
+                                                           <TextBlock x:Name="TxtSidebarSettingsButton"
+                                                                   Text="SETTINGS"
+                                                                   FontWeight="SemiBold"/>
                                             </StackPanel>
                                         </Button>
-                                    </DockPanel>
+                                    </Grid>
                                 </Border>
                             </Grid>
                         </Border>
 
                         <Border Grid.Column="2"
                                 CornerRadius="24"
-                                Background="#B111121A"
-                                BorderBrush="#382E4A"
-                                BorderThickness="1"
-                                Padding="14">
-                            <Frame x:Name="MainFrame"
-                                   Background="Transparent"
-                                   NavigationUIVisibility="Hidden"/>
+                                Background="#7A09090D"
+                                BorderBrush="Transparent"
+                                BorderThickness="0"
+                                Padding="18,18,18,10">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Frame x:Name="MainFrame"
+                                       Background="Transparent"
+                                       NavigationUIVisibility="Hidden"/>
+
+                                <Border Grid.Row="1"
+                                        Margin="0,18,0,0"
+                                        x:Name="DockBarPanel"
+                                        CornerRadius="26"
+                                        Background="#9807060D"
+                                        BorderBrush="#352641"
+                                        BorderThickness="0,1,0,0"
+                                        Padding="16,10,16,8"
+                                        IsEnabled="False">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <RadioButton x:Name="DockDashboardNav"
+                                                     Grid.Column="1"
+                                                     Style="{StaticResource DockNavProxy}"
+                                                     Checked="DockDashboard_Checked">
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="&#xE80F;"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontSize="17"
+                                                           HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="TxtDockDashboard"
+                                                           Text="ONE TAP"
+                                                           Margin="0,7,0,0"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="11"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </RadioButton>
+
+                                        <RadioButton x:Name="DockTunerNav"
+                                                     Grid.Column="2"
+                                                     Margin="8,0,0,0"
+                                                     Style="{StaticResource DockNavProxy}"
+                                                     Checked="DockTuner_Checked">
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="&#xE7FC;"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontSize="17"
+                                                           HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="TxtDockTuner"
+                                                           Text="GAMES"
+                                                           Margin="0,7,0,0"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="11"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </RadioButton>
+
+                                        <RadioButton x:Name="DockNetworkNav"
+                                                     Grid.Column="3"
+                                                     Margin="8,0,0,0"
+                                                     Style="{StaticResource DockNavProxy}"
+                                                     Checked="DockNetwork_Checked">
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="&#xE968;"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontSize="17"
+                                                           HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="TxtDockNetwork"
+                                                           Text="NET + TOOLS"
+                                                           Margin="0,7,0,0"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="Bold"
+                                                           FontSize="11"
+                                                           HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </RadioButton>
+
+                                        <RadioButton x:Name="DockSettingsNav"
+                                                     Grid.Column="4"
+                                                     Margin="8,0,0,0"
+                                                     Style="{StaticResource DockNavProxy}"
+                                                     Checked="DockSettings_Checked">
+                                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+                                                <TextBlock Text="&#xE713;"
+                                                           FontFamily="Segoe MDL2 Assets"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontSize="17"
+                                                           HorizontalAlignment="Center"/>
+                                                <TextBlock x:Name="TxtDockSettingsButton"
+                                                           Text="SETTINGS"
+                                                           Margin="0,7,0,0"
+                                                           Foreground="{Binding Foreground, RelativeSource={RelativeSource AncestorType=RadioButton}}"
+                                                           FontWeight="SemiBold"/>
+                                            </StackPanel>
+                                        </RadioButton>
+                                    </Grid>
+                                </Border>
+                            </Grid>
                         </Border>
                     </Grid>
                 </Grid>
@@ -993,18 +1135,20 @@
             <Grid x:Name="SettingsOverlay"
                   Visibility="Collapsed"
                   Opacity="0"
-                  Background="#B808070D"
+                  Background="#AA05050A"
                   MouseDown="SettingsOverlay_MouseDown">
-                <Border Width="560"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        CornerRadius="28"
-                        Background="#EC0E0D16"
-                        BorderBrush="#413458"
-                        BorderThickness="1"
-                        Padding="24"
-                        MouseDown="SettingsPanel_MouseDown">
-                    <Grid>
+                <Grid HorizontalAlignment="Right" Width="520">
+                    <Border Margin="18"
+                            CornerRadius="28"
+                            Background="#F00A0911"
+                            BorderBrush="#47375E"
+                            BorderThickness="1"
+                            Padding="24"
+                            MouseDown="SettingsPanel_MouseDown">
+                        <Border.Effect>
+                            <DropShadowEffect BlurRadius="28" ShadowDepth="0" Opacity="0.36" Color="#08060F"/>
+                        </Border.Effect>
+                        <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
@@ -1022,13 +1166,13 @@
 
                             <StackPanel>
                                 <TextBlock x:Name="TxtSettingsTitle"
-                                           Text="SESSION SETTINGS"
+                                           Text="CONTROL CENTER"
                                            Foreground="{StaticResource TextPrimary}"
                                            FontFamily="Bahnschrift"
                                            FontSize="32"
                                            FontWeight="Bold"/>
                                 <TextBlock x:Name="TxtSettingsSub"
-                                           Text="Manage account session and Discord Rich Presence."
+                                           Text="Shell behavior, account state, presence, and release channel."
                                            Margin="0,6,0,0"
                                            Foreground="{StaticResource TextSecondary}"
                                            FontSize="12"
@@ -1056,18 +1200,23 @@
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
-                                <StackPanel>
-                                    <TextBlock x:Name="TxtSettingsAccountLabel"
+                                    <StackPanel>
+                                        <TextBlock x:Name="TxtSettingsAccountLabel"
                                                Text="ACCOUNT"
                                                Foreground="{StaticResource TextMuted}"
                                                FontSize="10"
                                                FontWeight="Bold"/>
-                                    <TextBlock x:Name="TxtSettingsCurrentLanguageValue"
-                                               Text="English"
+                                    <TextBlock x:Name="TxtSettingsAccountValue"
+                                               Text="Guest"
                                                Margin="0,8,0,0"
                                                Foreground="{StaticResource TextPrimary}"
                                                FontSize="18"
                                                FontWeight="Bold"/>
+                                    <TextBlock x:Name="TxtSettingsAccountState"
+                                               Text="Locked"
+                                               Margin="0,4,0,0"
+                                               Foreground="{StaticResource TextSecondary}"
+                                               FontSize="11"/>
                                 </StackPanel>
 
                                 <Button x:Name="BtnSwitchAccount"
@@ -1149,7 +1298,7 @@
                                               VerticalAlignment="Center"/>
                                 </Grid>
 
-                                <Grid Grid.Row="2" Margin="0,16,0,0">
+                                <Grid Grid.Row="2" Margin="0,16,0,0" Visibility="Collapsed">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*"/>
                                         <ColumnDefinition Width="Auto"/>
@@ -1189,11 +1338,30 @@
                                            Foreground="{StaticResource TextMuted}"
                                            FontSize="10"
                                            FontWeight="Bold"/>
-                                <TextBlock x:Name="TxtSettingsLanguageHint" Text="The shell updates instantly when you switch language from the sidebar."
+                                <TextBlock x:Name="TxtSettingsCurrentLanguageValue"
+                                           Text="English"
+                                           Margin="0,8,0,0"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontSize="18"
+                                           FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtSettingsLanguageHint" Text="The shell updates instantly when you switch language from settings."
                                            Margin="0,8,0,0"
                                            Foreground="{StaticResource TextSecondary}"
                                            FontSize="11"
                                            TextWrapping="Wrap"/>
+                                <TextBlock x:Name="TxtLanguageLabel"
+                                           Text="LANGUAGE"
+                                           Margin="0,14,0,0"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontSize="12"
+                                           FontWeight="Bold"/>
+                                <ComboBox x:Name="LanguageSelector"
+                                          Style="{StaticResource DarkCombo}"
+                                          Margin="0,10,0,0"
+                                          SelectionChanged="LanguageSelector_SelectionChanged">
+                                    <ComboBoxItem x:Name="LangEnItem" Tag="en" Content="English"/>
+                                    <ComboBoxItem x:Name="LangTrItem" Tag="tr" Content="Turkish"/>
+                                </ComboBox>
                             </StackPanel>
                         </Border>
 
@@ -1255,7 +1423,7 @@
                                                    FontSize="10"
                                                    FontWeight="Bold"/>
                                         <TextBlock x:Name="TxtSettingsVersionValue"
-                                                   Text="1.0.0"
+                                                   Text="2.0.3"
                                                    Margin="0,8,0,0"
                                                    Foreground="{StaticResource TextPrimary}"
                                                    FontSize="18"
@@ -1296,7 +1464,8 @@
                                        FontSize="10"/>
                         </Border>
                     </Grid>
-                </Border>
+                    </Border>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

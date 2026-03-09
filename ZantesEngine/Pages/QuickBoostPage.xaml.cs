@@ -59,8 +59,9 @@ namespace ZantesEngine.Pages
 
             foreach (var pair in _moduleMap)
             {
-                if (_planMap.TryGetValue(pair.Value, out var module))
-                    pair.Key.IsChecked = module.DefaultEnabled;
+                bool available = _planMap.TryGetValue(pair.Value, out var module);
+                pair.Key.IsEnabled = available;
+                pair.Key.IsChecked = available && module is not null && module.DefaultEnabled;
             }
 
             RefreshReasonTexts();
@@ -149,8 +150,9 @@ namespace ZantesEngine.Pages
 
         private void UpdateSelectedCount()
         {
-            int selected = _moduleMap.Keys.Count(cb => cb.IsChecked == true);
-            TxtSelectedModules.Text = string.Format(LanguageManager.T("quick.selected"), selected, _moduleMap.Count);
+            int available = _moduleMap.Keys.Count(cb => cb.IsEnabled);
+            int selected = _moduleMap.Keys.Count(cb => cb.IsEnabled && cb.IsChecked == true);
+            TxtSelectedModules.Text = string.Format(LanguageManager.T("quick.selected"), selected, available);
         }
 
         private void SetBusy(bool value)
@@ -169,8 +171,8 @@ namespace ZantesEngine.Pages
 
         private void SelectAll_Click(object sender, RoutedEventArgs e)
         {
-            bool setAll = _moduleMap.Keys.Any(cb => cb.IsChecked != true);
-            foreach (var cb in _moduleMap.Keys)
+            bool setAll = _moduleMap.Keys.Where(cb => cb.IsEnabled).Any(cb => cb.IsChecked != true);
+            foreach (var cb in _moduleMap.Keys.Where(cb => cb.IsEnabled))
                 cb.IsChecked = setAll;
 
             UpdateSelectedCount();
@@ -188,7 +190,7 @@ namespace ZantesEngine.Pages
             }
 
             var selectedModules = _moduleMap
-                .Where(p => p.Key.IsChecked == true && _planMap.ContainsKey(p.Value))
+                .Where(p => p.Key.IsEnabled && p.Key.IsChecked == true && _planMap.ContainsKey(p.Value))
                 .Select(p => _planMap[p.Value])
                 .ToArray();
 
@@ -222,6 +224,14 @@ namespace ZantesEngine.Pages
 
             int ok = results.Count(r => r.Success);
             int fail = results.Count - ok;
+            if (selectedModules.Any(m => m.Id.Equals("gaming", StringComparison.OrdinalIgnoreCase)))
+            {
+                var gpuResult = GpuAutomationService.ApplyHighPerformanceForKnownGames();
+                var processPolicyResult = GameProcessPolicyService.ApplyPerformancePolicyForKnownGames();
+                AppendOutput($"GPU preference updated: {gpuResult.UpdatedEntryCount}");
+                AppendOutput($"Process policy updated: {processPolicyResult.UpdatedProcessCount}");
+            }
+
             AppendOutput(string.Format(LanguageManager.T("quick.apply_done"), ok, fail));
             SetBusy(false);
         }

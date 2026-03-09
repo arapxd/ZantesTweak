@@ -3,7 +3,7 @@
 
 #define MyAppName "Zantes Tweak"
 #ifndef MyAppVersion
-  #define MyAppVersion "1.0.0"
+  #define MyAppVersion "2.0.3"
 #endif
 #define MyAppPublisher "Zantes"
 #define MyAppBrandCredit "Made by Arap"

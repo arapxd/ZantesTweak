@@ -313,85 +313,12 @@ namespace ZantesEngine.Pages
         {
             var keys = new List<string>();
 
-            if (CbCustomPower.IsChecked == true)
-            {
-                keys.AddRange(new[]
-                {
-                    "power_high_performance",
-                    "cpu_maximum_state_100",
-                    "cpu_core_parking_off",
-                    "disable_power_throttling",
-                    "disable_startup_delay",
-                    "usb_selective_suspend_off"
-                });
-            }
-
             if (CbCustomLatency.IsChecked == true)
             {
                 keys.AddRange(new[]
                 {
                     "enable_game_mode",
-                    "disable_game_dvr",
-                    "disable_xbox_gamebar",
-                    "disable_mouse_accel",
-                    "disable_sticky_keys_shortcut",
-                    "mmcss_system_responsiveness",
-                    "mmcss_games_task_profile",
-                    "hw_scheduling",
-                    "disable_network_throttling"
-                });
-            }
-
-            if (CbCustomNetwork.IsChecked == true)
-            {
-                keys.AddRange(new[]
-                {
-                    "tcp_autotune",
-                    "network_rss",
-                    "tcp_ecn_disabled",
-                    "tcp_heuristics_disabled",
-                    "tcp_chimney_disabled",
-                    "tcp_rsc_disabled",
-                    "disable_nagle_algorithm",
-                    "disable_qos_reserved_bandwidth",
-                    "disable_delivery_opt",
-                    "dns_flush"
-                });
-            }
-
-            if (CbCustomBackground.IsChecked == true)
-            {
-                keys.AddRange(new[]
-                {
-                    "disable_telemetry",
-                    "disable_diagtrack_service",
-                    "disable_windows_error_reporting",
-                    "disable_background_apps",
-                    "disable_windows_tips",
-                    "disable_feedback_notifications",
-                    "disable_activity_history",
-                    "disable_clipboard_history",
-                    "disable_search_web_results",
-                    "disable_phone_service",
-                    "disable_consumer_features",
-                    "disable_storage_sense",
-                    "disable_onedrive_startup",
-                    "disable_teams_autostart"
-                });
-            }
-
-            if (CbCustomVisual.IsChecked == true)
-            {
-                keys.AddRange(new[]
-                {
-                    "visualfx_performance",
-                    "disable_menu_show_delay",
-                    "disable_window_animations",
-                    "disable_transparency",
-                    "disable_start_recommendations",
-                    "disable_windows_spotlight",
-                    "disable_widgets",
-                    "disable_copilot"
+                    "disable_game_dvr"
                 });
             }
 

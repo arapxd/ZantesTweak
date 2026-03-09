@@ -4,547 +4,176 @@
       Background="Transparent"
       FontFamily="Segoe UI">
 
-    <Grid Margin="14">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="16"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Page.Resources>
+        <Style x:Key="OrbButton" TargetType="Button">
+            <Setter Property="Foreground" Value="#09070D"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Grid SnapsToDevicePixels="True">
+                            <Border x:Name="Orb"
+                                    Background="{StaticResource PrimaryButtonGradient}"
+                                    CornerRadius="999"/>
+                            <Border x:Name="OrbStroke"
+                                    Margin="8"
+                                    CornerRadius="999"
+                                    BorderBrush="#E4D6FF"
+                                    BorderThickness="1"
+                                    Opacity="0.25"/>
+                            <ContentPresenter HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              RecognizesAccessKey="True"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="OrbStroke" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Orb" Property="Opacity" Value="0.95"/>
+                                <Setter TargetName="OrbStroke" Property="Opacity" Value="0.42"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Orb" Property="Opacity" Value="0.82"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Orb" Property="Opacity" Value="0.45"/>
+                                <Setter TargetName="OrbStroke" Property="Opacity" Value="0.12"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
 
-        <Border Grid.Row="0"
-                MinHeight="236"
-                CornerRadius="28"
-                BorderBrush="#44365B"
-                BorderThickness="1"
-                Padding="24">
-            <Border.Background>
-                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                    <GradientStop Color="#171521" Offset="0"/>
-                    <GradientStop Color="#11121A" Offset="0.55"/>
-                    <GradientStop Color="#1C1624" Offset="1"/>
-                </LinearGradientBrush>
-            </Border.Background>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="360"/>
-                </Grid.ColumnDefinitions>
+    <Grid Margin="18">
+        <Grid>
+            <StackPanel HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="620">
+                <TextBlock x:Name="TxtHeroEyebrow"
+                           Text="ONE TAP"
+                           Foreground="{StaticResource AccentPrimary}"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+                <TextBlock x:Name="TxtHeroTitle"
+                           Text="FPS optimize, one command."
+                           Margin="0,14,0,0"
+                           Foreground="{StaticResource TextPrimary}"
+                           FontFamily="Bahnschrift"
+                           FontSize="46"
+                           FontWeight="Bold"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+                <TextBlock x:Name="TxtHeroBody"
+                           Text="Creates a restore point first, then applies only evidence-backed FPS tweaks."
+                           Margin="0,16,0,0"
+                           Foreground="{StaticResource TextSecondary}"
+                           FontSize="14"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
 
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Image Source="pack://application:,,,/banner.png"
-                           Stretch="UniformToFill"
-                           Opacity="0.08"
-                           Margin="180,-30,-40,-40"
-                           IsHitTestVisible="False"/>
-
-                    <TextBlock Grid.Row="0"
-                               Text="Build a cleaner, faster Windows profile."
-                               Foreground="{StaticResource TextPrimary}"
-                               FontFamily="Bahnschrift"
-                               FontSize="42"
-                               FontWeight="Bold"
-                               TextWrapping="Wrap"/>
-
+                <Grid Margin="0,34,0,0"
+                      HorizontalAlignment="Center">
+                    <Ellipse Width="240"
+                             Height="240"
+                             Fill="#120F18"
+                             Stroke="#4E3772"
+                             StrokeThickness="1"/>
+                    <Ellipse Width="208"
+                             Height="208"
+                             Fill="#0B0A10"
+                             Stroke="#6E46A8"
+                             StrokeThickness="1"/>
                     <Button x:Name="BtnHeroApply"
-                            Grid.Row="1"
-                            Margin="0,16,0,0"
-                            HorizontalAlignment="Left"
-                            MinWidth="196"
-                            Height="42"
-                            Style="{StaticResource PrimaryBtn}"
+                            Width="176"
+                            Height="176"
+                            Style="{StaticResource OrbButton}"
                             Click="ApplySelectedNow_Click"
-                            Content="APPLY SELECTED NOW"/>
-
-                    <TextBlock Grid.Row="2"
-                               Margin="0,12,0,0"
-                               Text="Select the modules you want, check readiness on the right, then move directly into Quick Boost or the full optimizer flow."
-                               Foreground="{StaticResource TextSecondary}"
-                               FontSize="13"
-                               TextWrapping="Wrap"/>
-
-                    <StackPanel Grid.Row="3"
-                                Margin="0,20,0,0"
-                                Orientation="Horizontal"
-                                VerticalAlignment="Bottom">
-                        <Button x:Name="BtnSelectAll"
-                                Style="{StaticResource GhostBtn}"
-                                Click="SelectAll_Click"
-                                Content="SELECT ALL"
-                                MinWidth="120"/>
-                        <Button x:Name="BtnAdvancedFlow"
-                                Margin="12,0,0,0"
-                                Style="{StaticResource PrimaryBtn}"
-                                Click="Apply_Click"
-                                Content="OPEN ADVANCED APPLY FLOW"/>
-                        <Border Margin="12,0,0,0"
-                                Padding="14,0"
-                                Height="38"
-                                CornerRadius="12"
-                                Background="#151623"
-                                BorderBrush="#584A72"
-                                BorderThickness="1">
-                            <TextBlock x:Name="SelectedCountText"
-                                       Text="0 / 6 SELECTED"
-                                       Foreground="{StaticResource TextPrimary}"
-                                       VerticalAlignment="Center"
-                                       FontWeight="Bold"/>
-                        </Border>
-                    </StackPanel>
+                            FontFamily="Bahnschrift"
+                            FontSize="22"
+                            FontWeight="Bold"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center">
+                        <TextBlock x:Name="TxtHeroButton"
+                                   Text="RUN"/>
+                        <Button.RenderTransform>
+                            <ScaleTransform x:Name="BtnScale" ScaleX="1" ScaleY="1"/>
+                        </Button.RenderTransform>
+                        <Button.RenderTransformOrigin>0.5,0.5</Button.RenderTransformOrigin>
+                    </Button>
                 </Grid>
 
-                <Border Grid.Column="1"
-                        CornerRadius="24"
-                        Background="#A513121D"
-                        BorderBrush="#403357"
+                <TextBlock x:Name="StatusText"
+                           Margin="0,22,0,0"
+                           Text="Ready to create restore point and apply full optimize."
+                           Foreground="{StaticResource TextMuted}"
+                           FontSize="13"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <Grid x:Name="ProgressOverlay"
+                  Visibility="Collapsed"
+                  Opacity="0"
+                  Background="#D9040406">
+                <Border Width="420"
+                        Padding="28"
+                        CornerRadius="28"
+                        Background="#110F16"
+                        BorderBrush="#4A3470"
                         BorderThickness="1"
-                        Padding="18">
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
 
-                        <TextBlock Text="DEPLOYMENT READINESS"
-                                   Foreground="{StaticResource TextMuted}"
-                                   FontSize="10"
-                                   FontWeight="Bold"/>
-
-                        <Grid Grid.Row="1" Margin="0,16,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel>
-                                <TextBlock Text="Coverage"
-                                           Foreground="{StaticResource TextSecondary}"
-                                           FontSize="11"/>
-                                <TextBlock x:Name="EfficiencyText"
-                                           Text="0.0%"
-                                           Margin="0,4,0,0"
-                                           Foreground="{StaticResource TextPrimary}"
-                                           FontFamily="Bahnschrift"
-                                           FontSize="34"
-                                           FontWeight="Bold"/>
-                                <TextBlock Text="Selected module ratio"
-                                           Foreground="{StaticResource TextMuted}"
-                                           FontSize="10"/>
-                            </StackPanel>
-
-                            <StackPanel Grid.Column="1">
-                                <TextBlock Text="Selected"
-                                           Foreground="{StaticResource TextSecondary}"
-                                           FontSize="11"/>
-                                <TextBlock x:Name="SelectedTweaksValue"
-                                           Text="0"
-                                           Margin="0,4,0,0"
-                                           Foreground="{StaticResource TextPrimary}"
-                                           FontFamily="Bahnschrift"
-                                           FontSize="34"
-                                           FontWeight="Bold"/>
-                                <TextBlock Text="Modules ready to apply"
-                                           Foreground="{StaticResource TextMuted}"
-                                           FontSize="10"/>
-                            </StackPanel>
+                        <Grid Width="92" Height="92" HorizontalAlignment="Center">
+                            <Ellipse Stroke="#2B213B" StrokeThickness="8"/>
+                            <Path Stroke="{StaticResource AccentPrimary}"
+                                  StrokeThickness="8"
+                                  StrokeStartLineCap="Round"
+                                  StrokeEndLineCap="Round"
+                                  Data="M 46,10 A 36,36 0 0 1 82,46">
+                                <Path.RenderTransform>
+                                    <RotateTransform x:Name="SpinnerRotate" CenterX="46" CenterY="46"/>
+                                </Path.RenderTransform>
+                            </Path>
                         </Grid>
 
+                        <TextBlock x:Name="OverlayTitle"
+                                   Grid.Row="1"
+                                   Margin="0,20,0,0"
+                                   Text="Applying full optimize..."
+                                   Foreground="{StaticResource TextPrimary}"
+                                   FontFamily="Bahnschrift"
+                                   FontSize="28"
+                                   FontWeight="Bold"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"/>
+
+                        <TextBlock x:Name="OverlayStatus"
+                                   Grid.Row="2"
+                                   Margin="0,14,0,0"
+                                   Text="Creating restore point, then applying all safe performance layers."
+                                   Foreground="{StaticResource TextSecondary}"
+                                   FontSize="13"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap"/>
                     </Grid>
                 </Border>
             </Grid>
-        </Border>
-
-        <Grid Grid.Row="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1.4*"/>
-                <ColumnDefinition Width="16"/>
-                <ColumnDefinition Width="0.95*"/>
-            </Grid.ColumnDefinitions>
-
-            <Border Grid.Column="0"
-                    CornerRadius="26"
-                    Background="#8B111119"
-                    BorderBrush="#392F4C"
-                    BorderThickness="1"
-                    Padding="18">
-                <Grid>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="16"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel>
-                            <TextBlock Text="OPTIMIZATION DECK"
-                                       Foreground="{StaticResource TextMuted}"
-                                       FontSize="10"
-                                       FontWeight="Bold"/>
-                            <TextBlock Text="Pick the layers that should define this machine."
-                                       Margin="0,6,0,0"
-                                       Foreground="{StaticResource TextPrimary}"
-                                       FontFamily="Bahnschrift"
-                                       FontSize="27"
-                                       FontWeight="Bold"/>
-                        </StackPanel>
-                        <TextBlock Grid.Column="1"
-                                   Text="6 modules"
-                                   Foreground="{StaticResource TextSecondary}"
-                                   VerticalAlignment="Bottom"
-                                   FontSize="11"
-                                   FontWeight="SemiBold"/>
-                    </Grid>
-
-                    <UniformGrid Grid.Row="2" Rows="2" Columns="3">
-                        <Border Margin="0,0,12,12"
-                                Padding="18"
-                                CornerRadius="22"
-                                BorderThickness="1"
-                                BorderBrush="#2B4A60"
-                                Background="#151623"
-                                Cursor="Hand"
-                                Tag="TweakKernel"
-                                MouseLeftButtonUp="Card_SelectToggle"
-                                MouseEnter="Card_MouseEnter"
-                                MouseLeave="Card_MouseLeave">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="SYSTEM"
-                                               Foreground="{StaticResource AccentPrimary}"
-                                               FontSize="10"
-                                               FontWeight="Bold"
-                                               VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="TweakKernel" Grid.Column="1" Style="{StaticResource SoftCheck}" Tag="System" Checked="Tweak_Checked" Unchecked="Tweak_Checked"/>
-                                </Grid>
-                                <StackPanel Grid.Row="1" Margin="0,18,0,0">
-                                    <TextBlock Text="Kernel latency baseline" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Prioritizes the low-level scheduler path for faster response under sustained load." Margin="0,10,0,0" Foreground="{StaticResource TextSecondary}" FontSize="11" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <TextBlock Grid.Row="2" Text="Core scheduler path" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                            </Grid>
-                        </Border>
-
-                        <Border Margin="0,0,12,12"
-                                Padding="18"
-                                CornerRadius="22"
-                                BorderThickness="1"
-                                BorderBrush="#2B4A60"
-                                Background="#151623"
-                                Cursor="Hand"
-                                Tag="TweakTcp"
-                                MouseLeftButtonUp="Card_SelectToggle"
-                                MouseEnter="Card_MouseEnter"
-                                MouseLeave="Card_MouseLeave">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="CONNECTION"
-                                               Foreground="#A78DE7"
-                                               FontSize="10"
-                                               FontWeight="Bold"
-                                               VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="TweakTcp" Grid.Column="1" Style="{StaticResource SoftCheck}" Tag="Connection" Checked="Tweak_Checked" Unchecked="Tweak_Checked"/>
-                                </Grid>
-                                <StackPanel Grid.Row="1" Margin="0,18,0,0">
-                                    <TextBlock Text="TCP route cleanup" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Cuts queue-heavy network behavior and keeps the stack focused on low-latency traffic." Margin="0,10,0,0" Foreground="{StaticResource TextSecondary}" FontSize="11" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <TextBlock Grid.Row="2" Text="Packet and route path" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                            </Grid>
-                        </Border>
-
-                        <Border Margin="0,0,0,12"
-                                Padding="18"
-                                CornerRadius="22"
-                                BorderThickness="1"
-                                BorderBrush="#2B4A60"
-                                Background="#151623"
-                                Cursor="Hand"
-                                Tag="TweakMmcss"
-                                MouseLeftButtonUp="Card_SelectToggle"
-                                MouseEnter="Card_MouseEnter"
-                                MouseLeave="Card_MouseLeave">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="ENGINE"
-                                               Foreground="#C6B3E7"
-                                               FontSize="10"
-                                               FontWeight="Bold"
-                                               VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="TweakMmcss" Grid.Column="1" Style="{StaticResource SoftCheck}" Tag="Engine" Checked="Tweak_Checked" Unchecked="Tweak_Checked"/>
-                                </Grid>
-                                <StackPanel Grid.Row="1" Margin="0,18,0,0">
-                                    <TextBlock Text="MMCSS priority shaping" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Keeps multimedia-sensitive tasks in a higher priority lane for steadier frame delivery." Margin="0,10,0,0" Foreground="{StaticResource TextSecondary}" FontSize="11" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <TextBlock Grid.Row="2" Text="Media and input timing" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                            </Grid>
-                        </Border>
-
-                        <Border Margin="0,0,12,0"
-                                Padding="18"
-                                CornerRadius="22"
-                                BorderThickness="1"
-                                BorderBrush="#2B4A60"
-                                Background="#151623"
-                                Cursor="Hand"
-                                Tag="TweakRam"
-                                MouseLeftButtonUp="Card_SelectToggle"
-                                MouseEnter="Card_MouseEnter"
-                                MouseLeave="Card_MouseLeave">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="SYSTEM"
-                                               Foreground="#DDD0E8"
-                                               FontSize="10"
-                                               FontWeight="Bold"
-                                               VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="TweakRam" Grid.Column="1" Style="{StaticResource SoftCheck}" Tag="System" Checked="Tweak_Checked" Unchecked="Tweak_Checked"/>
-                                </Grid>
-                                <StackPanel Grid.Row="1" Margin="0,18,0,0">
-                                    <TextBlock Text="Memory pressure trim" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Rebalances thread and cache behavior to reduce noisy paging in long sessions." Margin="0,10,0,0" Foreground="{StaticResource TextSecondary}" FontSize="11" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <TextBlock Grid.Row="2" Text="RAM and paging flow" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                            </Grid>
-                        </Border>
-
-                        <Border Margin="0,0,12,0"
-                                Padding="18"
-                                CornerRadius="22"
-                                BorderThickness="1"
-                                BorderBrush="#2B4A60"
-                                Background="#151623"
-                                Cursor="Hand"
-                                Tag="TweakDriver"
-                                MouseLeftButtonUp="Card_SelectToggle"
-                                MouseEnter="Card_MouseEnter"
-                                MouseLeave="Card_MouseLeave">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="GRAPHICS"
-                                               Foreground="#C8AFF7"
-                                               FontSize="10"
-                                               FontWeight="Bold"
-                                               VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="TweakDriver" Grid.Column="1" Style="{StaticResource SoftCheck}" Tag="Graphics" Checked="Tweak_Checked" Unchecked="Tweak_Checked"/>
-                                </Grid>
-                                <StackPanel Grid.Row="1" Margin="0,18,0,0">
-                                    <TextBlock Text="Driver profile tune" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Targets shader cache stability and frame pacing improvements for GPU-heavy workloads." Margin="0,10,0,0" Foreground="{StaticResource TextSecondary}" FontSize="11" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <TextBlock Grid.Row="2" Text="GPU behavior layer" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                            </Grid>
-                        </Border>
-
-                        <Border Margin="0"
-                                Padding="18"
-                                CornerRadius="22"
-                                BorderThickness="1"
-                                BorderBrush="#2B4A60"
-                                Background="#151623"
-                                Cursor="Hand"
-                                Tag="TweakDebloat"
-                                MouseLeftButtonUp="Card_SelectToggle"
-                                MouseEnter="Card_MouseEnter"
-                                MouseLeave="Card_MouseLeave">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto"/>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="Auto"/>
-                                </Grid.RowDefinitions>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="ENGINE"
-                                               Foreground="#CDB7E8"
-                                               FontSize="10"
-                                               FontWeight="Bold"
-                                               VerticalAlignment="Center"/>
-                                    <CheckBox x:Name="TweakDebloat" Grid.Column="1" Style="{StaticResource SoftCheck}" Tag="Engine" Checked="Tweak_Checked" Unchecked="Tweak_Checked"/>
-                                </Grid>
-                                <StackPanel Grid.Row="1" Margin="0,18,0,0">
-                                    <TextBlock Text="Background noise cut" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" TextWrapping="Wrap"/>
-                                    <TextBlock Text="Parks non-essential services and startup clutter to free headroom for active work." Margin="0,10,0,0" Foreground="{StaticResource TextSecondary}" FontSize="11" TextWrapping="Wrap"/>
-                                </StackPanel>
-                                <TextBlock Grid.Row="2" Text="Service overhead cleanup" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                            </Grid>
-                        </Border>
-                    </UniformGrid>
-                </Grid>
-            </Border>
-
-            <StackPanel Grid.Column="2">
-                <Border CornerRadius="24"
-                        Background="#8B111119"
-                        BorderBrush="#392F4C"
-                        BorderThickness="1"
-                        Padding="18">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="16"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <StackPanel>
-                            <TextBlock Text="LIVE DEVICE STATE" Foreground="{StaticResource TextMuted}" FontSize="10" FontWeight="Bold"/>
-                            <TextBlock Text="Current pressure and latency indicators." Margin="0,6,0,0" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                        </StackPanel>
-
-                        <UniformGrid Grid.Row="2" Columns="2">
-                            <Border Margin="0,0,10,10" Padding="14" CornerRadius="18" Background="#141522" BorderBrush="#3D3151" BorderThickness="1">
-                                <StackPanel>
-                                    <TextBlock Text="CPU" Foreground="{StaticResource TextMuted}" FontSize="10" FontWeight="Bold"/>
-                                    <TextBlock x:Name="CpuVal" Text="0.0%" Margin="0,6,0,0" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="26" FontWeight="Bold"/>
-                                    <TextBlock x:Name="CpuStatus" Text="NORMAL" Foreground="{StaticResource TextSecondary}" FontSize="11"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Margin="0,0,0,10" Padding="14" CornerRadius="18" Background="#141522" BorderBrush="#3D3151" BorderThickness="1">
-                                <StackPanel>
-                                    <TextBlock Text="RAM" Foreground="{StaticResource TextMuted}" FontSize="10" FontWeight="Bold"/>
-                                    <TextBlock x:Name="RamVal" Text="0.0%" Margin="0,6,0,0" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="26" FontWeight="Bold"/>
-                                    <TextBlock x:Name="RamDetail" Text="- GB / - GB" Foreground="{StaticResource TextSecondary}" FontSize="11"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Margin="0,0,10,0" Padding="14" CornerRadius="18" Background="#141522" BorderBrush="#3D3151" BorderThickness="1">
-                                <StackPanel>
-                                    <TextBlock Text="NETWORK" Foreground="{StaticResource TextMuted}" FontSize="10" FontWeight="Bold"/>
-                                    <TextBlock x:Name="PingVal" Text="Ping -" Margin="0,6,0,0" Foreground="{StaticResource TextPrimary}" FontSize="16" FontWeight="Bold"/>
-                                    <TextBlock Text="Round trip estimate" Foreground="{StaticResource TextSecondary}" FontSize="11"/>
-                                </StackPanel>
-                            </Border>
-                            <Border Padding="14" CornerRadius="18" Background="#141522" BorderBrush="#3D3151" BorderThickness="1">
-                                <StackPanel>
-                                    <TextBlock Text="FRAME TIME" Foreground="{StaticResource TextMuted}" FontSize="10" FontWeight="Bold"/>
-                                    <TextBlock x:Name="FpsVal" Text="Frame -" Margin="0,6,0,0" Foreground="{StaticResource TextPrimary}" FontSize="16" FontWeight="Bold"/>
-                                    <TextBlock Text="UI loop sample" Foreground="{StaticResource TextSecondary}" FontSize="11"/>
-                                </StackPanel>
-                            </Border>
-                        </UniformGrid>
-                    </Grid>
-                </Border>
-
-                <Border Margin="0,16,0,0" CornerRadius="24" Background="#8B111119" BorderBrush="#392F4C" BorderThickness="1" Padding="18">
-                    <StackPanel>
-                        <TextBlock Text="SELECTION BREAKDOWN" Foreground="{StaticResource TextMuted}" FontSize="10" FontWeight="Bold"/>
-                        <TextBlock Text="How the chosen stack is distributed." Margin="0,6,0,0" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                        <Grid Margin="0,18,0,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                                <RowDefinition Height="Auto"/>
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="Engine" Foreground="{StaticResource TextSecondary}" FontSize="12"/>
-                            <TextBlock x:Name="CountEngine" Grid.Column="1" Text="0" Foreground="{StaticResource TextPrimary}" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="1" Text="System" Foreground="{StaticResource TextSecondary}" FontSize="12" Margin="0,10,0,0"/>
-                            <TextBlock x:Name="CountSystem" Grid.Row="1" Grid.Column="1" Text="0" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="2" Text="Connection" Foreground="{StaticResource TextSecondary}" FontSize="12" Margin="0,10,0,0"/>
-                            <TextBlock x:Name="CountConnection" Grid.Row="2" Grid.Column="1" Text="0" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}" FontWeight="Bold"/>
-                            <TextBlock Grid.Row="3" Text="Graphics" Foreground="{StaticResource TextSecondary}" FontSize="12" Margin="0,10,0,0"/>
-                            <TextBlock x:Name="CountGraphics" Grid.Row="3" Grid.Column="1" Text="0" Margin="0,10,0,0" Foreground="{StaticResource TextPrimary}" FontWeight="Bold"/>
-                        </Grid>
-                    </StackPanel>
-                </Border>
-
-                <Border Margin="0,16,0,0" CornerRadius="24" Background="#8B111119" BorderBrush="#392F4C" BorderThickness="1" Padding="18">
-                    <StackPanel>
-                        <TextBlock Text="SYSTEM PROFILE" Foreground="{StaticResource TextMuted}" FontSize="10" FontWeight="Bold"/>
-                        <TextBlock Text="Detected hardware baseline." Margin="0,6,0,0" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                        <Border Margin="0,18,0,0" Padding="14" CornerRadius="18" Background="#141522" BorderBrush="#3D3151" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Operating system" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                                <TextBlock x:Name="LiveOs" Text="-" Margin="0,5,0,0" Foreground="{StaticResource TextPrimary}" FontSize="12" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Margin="0,10,0,0" Padding="14" CornerRadius="18" Background="#141522" BorderBrush="#3D3151" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Processor" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                                <TextBlock x:Name="LiveCpu" Text="-" Margin="0,5,0,0" Foreground="{StaticResource TextPrimary}" FontSize="12" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Border>
-                        <Border Margin="0,10,0,0" Padding="14" CornerRadius="18" Background="#141522" BorderBrush="#3D3151" BorderThickness="1">
-                            <StackPanel>
-                                <TextBlock Text="Graphics" Foreground="{StaticResource TextMuted}" FontSize="10"/>
-                                <TextBlock x:Name="LiveGpu" Text="-" Margin="0,5,0,0" Foreground="{StaticResource TextPrimary}" FontSize="12" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </Border>
-
-                <Border Margin="0,16,0,0" CornerRadius="24" Background="#8B111119" BorderBrush="#392F4C" BorderThickness="1" Padding="18">
-                    <StackPanel>
-                        <TextBlock Text="NEXT STEPS" Foreground="{StaticResource TextMuted}" FontSize="10" FontWeight="Bold"/>
-                        <TextBlock Text="Jump directly into the workflow that fits your pace." Margin="0,6,0,0" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                        <Button x:Name="BtnQuickBoostOpen" Margin="0,18,0,0" Style="{StaticResource GhostBtn}" Click="QuickBoost_Open" Content="QUICK BOOST"/>
-                        <Button Margin="0,10,0,0" Style="{StaticResource GhostBtn}" Click="Optimizer_Open" Content="OPEN OPTIMIZER"/>
-                        <Button Margin="0,10,0,0" Style="{StaticResource GhostBtn}" Click="Tuner_Open" Content="OPEN TUNER"/>
-                    </StackPanel>
-                </Border>
-            </StackPanel>
         </Grid>
     </Grid>
 </Page>

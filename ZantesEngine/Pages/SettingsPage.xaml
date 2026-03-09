@@ -1,0 +1,265 @@
+<Page x:Class="ZantesEngine.Pages.SettingsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="Transparent"
+      FontFamily="Segoe UI"
+      Loaded="Page_Loaded">
+
+    <Page.Resources>
+        <Style x:Key="SettingsActionButton" TargetType="Button" BasedOn="{StaticResource GhostBtn}">
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="MinWidth" Value="220"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel>
+            <TextBlock x:Name="TxtHeaderEyebrow"
+                       Text="SETTINGS"
+                       Foreground="{StaticResource AccentPrimary}"
+                       FontSize="11"
+                       FontWeight="Bold"/>
+            <TextBlock x:Name="TxtHeaderTitle"
+                       Text="Control the shell, account, and update flow."
+                       Margin="0,10,0,0"
+                       Foreground="{StaticResource TextPrimary}"
+                       FontFamily="Bahnschrift"
+                       FontSize="38"
+                       FontWeight="Bold"
+                       TextWrapping="Wrap"/>
+            <TextBlock x:Name="TxtHeaderBody"
+                       Text="Language now lives here. Account state, Discord Rich Presence, update checks, and shell behavior are all kept in one cleaner place."
+                       Margin="0,12,0,0"
+                       Foreground="{StaticResource TextSecondary}"
+                       FontSize="13"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1"
+                      Margin="0,24,0,0"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel MaxWidth="980">
+                <Border CornerRadius="28"
+                        Background="#860D0C13"
+                        BorderBrush="#392A46"
+                        BorderThickness="1"
+                        Padding="22">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1.15*"/>
+                            <ColumnDefinition Width="28"/>
+                            <ColumnDefinition Width="0.85*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock x:Name="TxtAccountLabel"
+                                       Text="ACCOUNT"
+                                       Foreground="{StaticResource TextMuted}"
+                                       FontSize="10"
+                                       FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtAccountName"
+                                       Text="Guest"
+                                       Margin="0,12,0,0"
+                                       Foreground="{StaticResource TextPrimary}"
+                                       FontFamily="Bahnschrift"
+                                       FontSize="30"
+                                       FontWeight="Bold"/>
+                            <TextBlock x:Name="TxtAccountState"
+                                       Text="Locked"
+                                       Margin="0,8,0,0"
+                                       Foreground="{StaticResource TextSecondary}"
+                                       FontSize="12"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <Button x:Name="BtnSwitchAccount"
+                                    Margin="0,0,0,10"
+                                    Style="{StaticResource SettingsActionButton}"
+                                    Click="BtnSwitchAccount_Click"
+                                    Content="SWITCH ACCOUNT"/>
+                            <Button x:Name="BtnLogout"
+                                    Style="{StaticResource SettingsActionButton}"
+                                    Click="BtnLogout_Click"
+                                    Content="LOGOUT"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <Border Margin="0,18,0,0"
+                        CornerRadius="28"
+                        Background="#860D0C13"
+                        BorderBrush="#392A46"
+                        BorderThickness="1"
+                        Padding="22">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtLanguageCardLabel"
+                                   Text="LANGUAGE"
+                                   Foreground="{StaticResource TextMuted}"
+                                   FontSize="10"
+                                   FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtLanguageValue"
+                                   Text="English"
+                                   Margin="0,12,0,0"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   FontFamily="Bahnschrift"
+                                   FontSize="30"
+                                   FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtLanguageHint"
+                                   Text="The shell updates instantly when you switch it here."
+                                   Margin="0,8,0,0"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   FontSize="11"
+                                   TextWrapping="Wrap"/>
+                        <ComboBox x:Name="LanguageSelector"
+                                  Margin="0,18,0,0"
+                                  Width="240"
+                                  HorizontalAlignment="Left"
+                                  Style="{StaticResource DarkCombo}"
+                                  SelectionChanged="LanguageSelector_SelectionChanged">
+                            <ComboBoxItem Tag="en" Content="English"/>
+                            <ComboBoxItem Tag="tr" Content="Turkish"/>
+                        </ComboBox>
+                    </StackPanel>
+                </Border>
+
+                <Border Margin="0,18,0,0"
+                        CornerRadius="28"
+                        Background="#860D0C13"
+                        BorderBrush="#392A46"
+                        BorderThickness="1"
+                        Padding="22">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtPreferencesLabel"
+                                   Text="SHELL OPTIONS"
+                                   Foreground="{StaticResource TextMuted}"
+                                   FontSize="10"
+                                   FontWeight="Bold"/>
+
+                        <Grid Margin="0,16,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock x:Name="TxtPresenceTitle"
+                                           Text="DISCORD RICH PRESENCE"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontSize="14"
+                                           FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtPresenceBody"
+                                           Text="Show your current Zantes Tweak activity on Discord."
+                                           Margin="0,6,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <CheckBox x:Name="ToggleRichPresence"
+                                      Grid.Column="1"
+                                      Style="{StaticResource Toggle}"
+                                      Click="ToggleRichPresence_Click"
+                                      VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <Grid Margin="0,18,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock x:Name="TxtPinTitle"
+                                           Text="PIN WINDOW"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontSize="14"
+                                           FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtPinBody"
+                                           Text="Keep the shell always on top."
+                                           Margin="0,6,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <CheckBox x:Name="ToggleAlwaysOnTop"
+                                      Grid.Column="1"
+                                      Style="{StaticResource Toggle}"
+                                      Click="ToggleAlwaysOnTop_Click"
+                                      VerticalAlignment="Center"/>
+                        </Grid>
+
+                        <Grid Margin="0,18,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock x:Name="TxtAutoUpdateTitle"
+                                           Text="AUTO UPDATE CHECK"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontSize="14"
+                                           FontWeight="Bold"/>
+                                <TextBlock x:Name="TxtAutoUpdateBody"
+                                           Text="Check GitHub Releases automatically when the shell opens."
+                                           Margin="0,6,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="11"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <CheckBox x:Name="ToggleAutoUpdate"
+                                      Grid.Column="1"
+                                      Style="{StaticResource Toggle}"
+                                      Click="ToggleAutoUpdate_Click"
+                                      VerticalAlignment="Center"/>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border Margin="0,18,0,0"
+                        CornerRadius="28"
+                        Background="#860D0C13"
+                        BorderBrush="#392A46"
+                        BorderThickness="1"
+                        Padding="22">
+                    <StackPanel>
+                        <TextBlock x:Name="TxtUpdateCardLabel"
+                                   Text="UPDATE CHANNEL"
+                                   Foreground="{StaticResource TextMuted}"
+                                   FontSize="10"
+                                   FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtVersionValue"
+                                   Text="v2.0.3"
+                                   Margin="0,12,0,0"
+                                   Foreground="{StaticResource TextPrimary}"
+                                   FontFamily="Bahnschrift"
+                                   FontSize="30"
+                                   FontWeight="Bold"/>
+                        <TextBlock x:Name="TxtUpdateStatus"
+                                   Text="Ready"
+                                   Margin="0,8,0,0"
+                                   Foreground="{StaticResource TextSecondary}"
+                                   FontSize="11"
+                                   TextWrapping="Wrap"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,18,0,0">
+                            <Button x:Name="BtnCheckUpdates"
+                                    Style="{StaticResource SettingsActionButton}"
+                                    Margin="0,0,10,0"
+                                    Click="BtnCheckUpdates_Click"
+                                    Content="CHECK NOW"/>
+                            <Button x:Name="BtnOpenRelease"
+                                    Style="{StaticResource SettingsActionButton}"
+                                    Click="BtnOpenRelease_Click"
+                                    Content="OPEN RELEASE PAGE"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

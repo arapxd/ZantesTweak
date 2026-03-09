@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Management;
 using Microsoft.Win32;
 
 namespace ZantesEngine.Services
@@ -24,7 +23,7 @@ namespace ZantesEngine.Services
                 ["cs2"] = new[] { "cs2", "csgo" },
                 ["hoi4"] = new[] { "hoi4", "heartsofiron4" },
                 ["fivem"] = new[] { "fivem", "fivem_gta", "gta5" },
-                ["lol"] = new[] { "leagueclient", "leagueclientux" },
+                ["lol"] = new[] { "league of legends", "leagueclientuxrender" },
                 ["fortnite"] = new[] { "fortniteclient-win64-shipping" },
                 ["apex"] = new[] { "r5apex" },
                 ["pubg"] = new[] { "tslgame" },
@@ -34,16 +33,6 @@ namespace ZantesEngine.Services
 
         public static GpuAutomationResult ApplyHighPerformanceForPreset(string presetId)
         {
-            if (!IsNvidiaPresent())
-            {
-                return new GpuAutomationResult
-                {
-                    Executed = true,
-                    UpdatedEntryCount = 0,
-                    Message = "NVIDIA not detected"
-                };
-            }
-
             var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
             foreach (string p in GetRunningGameExePaths(presetId))
                 paths.Add(p);
@@ -63,24 +52,34 @@ namespace ZantesEngine.Services
             };
         }
 
-        private static bool IsNvidiaPresent()
+        public static GpuAutomationResult ApplyHighPerformanceForKnownGames()
         {
-            try
+            var paths = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (string presetId in PresetProcessHints.Keys)
             {
-                using var searcher = new ManagementObjectSearcher("SELECT Name FROM Win32_VideoController");
-                foreach (ManagementObject obj in searcher.Get())
+                foreach (string path in GetRunningGameExePaths(presetId))
+                    paths.Add(path);
+
+                foreach (string path in GetKnownPathCandidates(presetId))
                 {
-                    string name = obj["Name"]?.ToString() ?? string.Empty;
-                    if (name.Contains("NVIDIA", StringComparison.OrdinalIgnoreCase))
-                        return true;
+                    if (File.Exists(path))
+                        paths.Add(path);
+                }
+
+                if (GameUpdateWatcherService.TryResolveExecutablePath(presetId, out string resolvedPath) &&
+                    File.Exists(resolvedPath))
+                {
+                    paths.Add(resolvedPath);
                 }
             }
-            catch
-            {
-                return false;
-            }
 
-            return false;
+            int updated = ApplyHighPerformancePreference(paths);
+            return new GpuAutomationResult
+            {
+                Executed = true,
+                UpdatedEntryCount = updated,
+                Message = updated == 0 ? "No known game EXE found" : "Applied"
+            };
         }
 
         private static IEnumerable<string> GetRunningGameExePaths(string presetId)
@@ -128,6 +127,36 @@ namespace ZantesEngine.Services
             {
                 yield return Path.Combine(pf86, "Steam", "steamapps", "common", "Hearts of Iron IV", "hoi4.exe");
                 yield return Path.Combine(pf, "Steam", "steamapps", "common", "Hearts of Iron IV", "hoi4.exe");
+            }
+            else if (presetId.Equals("fortnite", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return Path.Combine(pf, "Epic Games", "Fortnite", "FortniteGame", "Binaries", "Win64", "FortniteClient-Win64-Shipping.exe");
+            }
+            else if (presetId.Equals("lol", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return Path.Combine(pf, "Riot Games", "League of Legends", "Game", "League of Legends.exe");
+                yield return Path.Combine(pf86, "Riot Games", "League of Legends", "Game", "League of Legends.exe");
+            }
+            else if (presetId.Equals("apex", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return Path.Combine(pf86, "Steam", "steamapps", "common", "Apex Legends", "r5apex.exe");
+                yield return Path.Combine(pf, "EA Games", "Apex", "Apex", "r5apex.exe");
+            }
+            else if (presetId.Equals("pubg", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return Path.Combine(pf86, "Steam", "steamapps", "common", "PUBG", "TslGame", "Binaries", "Win64", "TslGame.exe");
+            }
+            else if (presetId.Equals("r6", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return Path.Combine(pf86, "Steam", "steamapps", "common", "Tom Clancy's Rainbow Six Siege", "RainbowSix.exe");
+                yield return Path.Combine(pf86, "Steam", "steamapps", "common", "Tom Clancy's Rainbow Six Siege", "RainbowSix_Vulkan.exe");
+                yield return Path.Combine(pf86, "Ubisoft", "Ubisoft Game Launcher", "games", "Tom Clancy's Rainbow Six Siege", "RainbowSix.exe");
+                yield return Path.Combine(pf86, "Ubisoft", "Ubisoft Game Launcher", "games", "Tom Clancy's Rainbow Six Siege", "RainbowSix_Vulkan.exe");
+            }
+            else if (presetId.Equals("ow2", StringComparison.OrdinalIgnoreCase))
+            {
+                yield return Path.Combine(pf86, "Overwatch", "_retail_", "Overwatch.exe");
+                yield return Path.Combine(pf86, "Battle.net", "Games", "Overwatch", "_retail_", "Overwatch.exe");
             }
         }
 

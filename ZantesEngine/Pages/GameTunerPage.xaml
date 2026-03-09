@@ -5,398 +5,973 @@
       FontFamily="Segoe UI">
 
     <Page.Resources>
-        <Style x:Key="GameCardBtn" TargetType="RadioButton">
+        <Style x:Key="GameCardButton" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
             <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Margin" Value="8"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="RadioButton">
-                        <Border x:Name="Wrap"
-                                Width="266"
-                                Height="154"
-                                CornerRadius="12"
-                                BorderBrush="#44385B"
-                                BorderThickness="1"
-                                Background="#140F1D"
-                                SnapsToDevicePixels="True">
-                            <Border.RenderTransform>
-                                <ScaleTransform x:Name="CardScale" ScaleX="1" ScaleY="1"/>
-                            </Border.RenderTransform>
-                            <Grid ClipToBounds="True">
-                                <ContentPresenter/>
-                                <Border x:Name="Glow"
-                                        Opacity="0"
-                                        CornerRadius="12"
-                                        BorderBrush="#8F61FF"
-                                        BorderThickness="1"/>
-                            </Grid>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Card"
+                                CornerRadius="26"
+                                Background="#140F19"
+                                BorderBrush="#463365"
+                                BorderThickness="1">
+                            <ContentPresenter/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Wrap" Property="BorderBrush" Value="#4A3A70"/>
-                                <Trigger.EnterActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="CardScale" Storyboard.TargetProperty="ScaleX" To="1.02" Duration="0:0:0.16"/>
-                                            <DoubleAnimation Storyboard.TargetName="CardScale" Storyboard.TargetProperty="ScaleY" To="1.02" Duration="0:0:0.16"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.EnterActions>
-                                <Trigger.ExitActions>
-                                    <BeginStoryboard>
-                                        <Storyboard>
-                                            <DoubleAnimation Storyboard.TargetName="CardScale" Storyboard.TargetProperty="ScaleX" To="1" Duration="0:0:0.16"/>
-                                            <DoubleAnimation Storyboard.TargetName="CardScale" Storyboard.TargetProperty="ScaleY" To="1" Duration="0:0:0.16"/>
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </Trigger.ExitActions>
+                                <Setter TargetName="Card" Property="BorderBrush" Value="#7A5AB3"/>
+                                <Setter TargetName="Card" Property="Background" Value="#171121"/>
                             </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter TargetName="Wrap" Property="BorderBrush" Value="#6C2BFF"/>
-                                <Setter TargetName="Wrap" Property="Background" Value="#1A1329"/>
-                                <Setter TargetName="Glow" Property="Opacity" Value="1"/>
-                                <Setter TargetName="Glow" Property="Effect">
-                                    <Setter.Value>
-                                        <DropShadowEffect Color="#8F61FF" BlurRadius="18" ShadowDepth="0" Opacity="0.85"/>
-                                    </Setter.Value>
-                                </Setter>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Card" Property="Background" Value="#120E19"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <Style x:Key="ModeSliderActiveTrack" TargetType="RepeatButton">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Height="14"
+                                CornerRadius="999"
+                                BorderBrush="#BC9BFF"
+                                BorderThickness="1">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0.5" EndPoint="1,0.5">
+                                    <GradientStop Color="#FFF7FF" Offset="0"/>
+                                    <GradientStop Color="#DAB9FF" Offset="0.38"/>
+                                    <GradientStop Color="#8B5CF6" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="14"
+                                                  ShadowDepth="0"
+                                                  Color="#7F4CFF"
+                                                  Opacity="0.34"/>
+                            </Border.Effect>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModeSliderInactiveTrack" TargetType="RepeatButton">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="IsTabStop" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <Border Height="14"
+                                CornerRadius="999"
+                                Background="#15101C"
+                                BorderBrush="#312043"
+                                BorderThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ModeSliderThumb" TargetType="Thumb">
+            <Setter Property="Width" Value="34"/>
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Thumb">
+                        <Grid>
+                            <Ellipse Fill="#16FFFFFF"/>
+                            <Ellipse Margin="2"
+                                     Stroke="#F7EFFF"
+                                     StrokeThickness="1.2">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush GradientOrigin="0.35,0.35">
+                                        <GradientStop Color="#FFFDFE" Offset="0"/>
+                                        <GradientStop Color="#DFC4FF" Offset="0.48"/>
+                                        <GradientStop Color="#8C5EFF" Offset="1"/>
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                                <Ellipse.Effect>
+                                    <DropShadowEffect BlurRadius="22"
+                                                      ShadowDepth="0"
+                                                      Color="#A35DFF"
+                                                      Opacity="0.62"/>
+                                </Ellipse.Effect>
+                            </Ellipse>
+                            <Border Width="12"
+                                    Height="12"
+                                    CornerRadius="6"
+                                    Background="#130C1D"
+                                    BorderBrush="#FFF6FF"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="GameModeSlider" TargetType="Slider">
+            <Setter Property="Foreground" Value="#A778FF"/>
+            <Setter Property="Background" Value="#241A34"/>
+            <Setter Property="Height" Value="52"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Slider">
+                        <Grid Margin="0,4">
+                            <Border Height="30"
+                                    VerticalAlignment="Center"
+                                    CornerRadius="999"
+                                    BorderBrush="#4D3771"
+                                    BorderThickness="1">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#16101B" Offset="0"/>
+                                        <GradientStop Color="#0D0911" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                            </Border>
+                            <Border Height="10"
+                                    Margin="18,0"
+                                    VerticalAlignment="Center"
+                                    CornerRadius="999"
+                                    Background="#1DFFFFFF"/>
+                            <Track x:Name="PART_Track"
+                                   Margin="14,0"
+                                   VerticalAlignment="Center">
+                                <Track.DecreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource ModeSliderActiveTrack}"/>
+                                </Track.DecreaseRepeatButton>
+                                <Track.Thumb>
+                                    <Thumb Style="{StaticResource ModeSliderThumb}"/>
+                                </Track.Thumb>
+                                <Track.IncreaseRepeatButton>
+                                    <RepeatButton Style="{StaticResource ModeSliderInactiveTrack}"/>
+                                </Track.IncreaseRepeatButton>
+                            </Track>
+                            <UniformGrid Margin="24,0"
+                                         Columns="3"
+                                         HorizontalAlignment="Stretch"
+                                         VerticalAlignment="Center"
+                                         IsHitTestVisible="False">
+                                <Ellipse Width="6"
+                                         Height="6"
+                                         Fill="#40FFFFFF"
+                                         HorizontalAlignment="Left"/>
+                                <Ellipse Width="7"
+                                         Height="7"
+                                         Fill="#78FFFFFF"
+                                         HorizontalAlignment="Center"/>
+                                <Ellipse Width="6"
+                                         Height="6"
+                                         Fill="#40FFFFFF"
+                                         HorizontalAlignment="Right"/>
+                            </UniformGrid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
-    <Grid Margin="22,18,22,20">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+    <Grid Margin="24">
+        <Grid x:Name="LibraryView">
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel HorizontalAlignment="Center"
+                            VerticalAlignment="Top"
+                            Width="920"
+                            Margin="0,10,0,16">
+                <TextBlock x:Name="TxtLibraryEyebrow"
+                           Text="GAMES"
+                           Foreground="{StaticResource AccentPrimary}"
+                           FontSize="11"
+                           FontWeight="Bold"
+                           HorizontalAlignment="Center"/>
+                <TextBlock x:Name="TxtLibraryTitle"
+                           Text="Pick a title, then open its own tuning page."
+                           Margin="0,14,0,0"
+                           Foreground="{StaticResource TextPrimary}"
+                           FontFamily="Bahnschrift"
+                           FontSize="42"
+                           FontWeight="Bold"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+                <TextBlock x:Name="TxtLibraryBody"
+                           Text="Each game gets its own quality or performance pass, restore point, and GPU priority step."
+                           Margin="0,14,0,0"
+                           Foreground="{StaticResource TextSecondary}"
+                           FontSize="14"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
 
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                <WrapPanel Margin="0,34,0,0"
+                           HorizontalAlignment="Center"
+                           ItemWidth="448"
+                           ItemHeight="224">
+                    <Button Tag="V"
+                            Margin="0,0,12,12"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="valorant">
+                        <Grid>
+                            <Image Source="/Assets/Games/valorant.png"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.34"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom"
+                                       Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="V"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="VALORANT"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="28"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Riot anti-cheat compatibility, lower capture overhead, and cleaner input path."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
 
-            <StackPanel>
-                <TextBlock x:Name="TxtModule" Text="MODULE 02" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
-                <TextBlock x:Name="TxtTitle" Text="GAME TUNER" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="31" FontWeight="Bold"/>
+                    <Button Tag="C"
+                            Margin="12,0,0,12"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="cs2">
+                        <Grid>
+                            <Image Source="/Assets/Games/cs2.png"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.34"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="C"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="CS2"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="28"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Competitive profile for latency, frame pacing, and cleaner foreground scheduling."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <Button Tag="F"
+                            Margin="0,12,12,0"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="fivem">
+                        <Grid>
+                            <Image Source="/Assets/Games/fivem.png"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.38"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="F"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="FIVEM"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="28"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Safe FiveM cleanup, GPU preference, and live game tuning for RP sessions."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <Button Tag="FN"
+                            Margin="12,12,0,0"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="fortnite">
+                        <Grid>
+                            <Image Source="/Assets/Games/fortnite.jpg"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.38"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="FN"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="FORTNITE"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="28"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Faster FPS path, cleaner Windows defaults, and stronger responsiveness tuning."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                    <Button Tag="H"
+                            Margin="0,0,12,12"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="hoi4">
+                        <Grid>
+                            <Image Source="/Assets/Games/hoi4.jpg"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.34"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="H"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="HEARTS OF IRON IV"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="24"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="CPU-heavy grand strategy profile with background trimming and steadier long-session behavior."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <Button Tag="L"
+                            Margin="12,0,0,12"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="lol">
+                        <Grid>
+                            <Image Source="/Assets/Games/lol.jpg"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.34"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="L"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="LEAGUE OF LEGENDS"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="24"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Lighter esports profile for cleaner latency, capture trimming, and stable desktop responsiveness."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <Button Tag="A"
+                            Margin="0,0,12,12"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="apex">
+                        <Grid>
+                            <Image Source="/Assets/Games/apex.png"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.34"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="A"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="APEX LEGENDS"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="24"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Competitive shooter preset tuned for lower latency, higher FPS bias, and foreground stability."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <Button Tag="P"
+                            Margin="12,0,0,12"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="pubg">
+                        <Grid>
+                            <Image Source="/Assets/Games/pubg.png"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.38"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="P"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="18"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="PUBG"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="28"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Open-world shooter pass with stronger frame pacing cleanup and lower overhead defaults."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <Button Tag="R6"
+                            Margin="0,0,12,12"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="r6">
+                        <Grid>
+                            <Image Source="/Assets/Games/r6.png"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.38"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="R6"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="16"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="RAINBOW SIX"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="26"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Tactical low-latency preset with stronger priority bias and leaner Windows gaming defaults."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+
+                    <Button Tag="OW"
+                            Margin="12,0,0,12"
+                            Style="{StaticResource GameCardButton}"
+                            Click="GameCard_Click"
+                            CommandParameter="ow2">
+                        <Grid>
+                            <Image Source="/Assets/Games/ow2.jpg"
+                                   Stretch="UniformToFill"
+                                   Opacity="0.34"/>
+                            <Rectangle Fill="#C0100D16"/>
+                            <Rectangle VerticalAlignment="Bottom" Height="96">
+                                <Rectangle.Fill>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                        <GradientStop Color="#00100D16" Offset="0"/>
+                                        <GradientStop Color="#F014101B" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Rectangle.Fill>
+                            </Rectangle>
+                            <Border Width="42"
+                                    Height="42"
+                                    CornerRadius="14"
+                                    Background="#221A30"
+                                    BorderBrush="#7454A9"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Top"
+                                    Margin="18,18,0,0">
+                                <TextBlock Text="OW"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="15"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <StackPanel VerticalAlignment="Bottom" Margin="18,0,18,16">
+                                <TextBlock Text="OVERWATCH 2"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="24"
+                                           FontWeight="Bold"/>
+                                <TextBlock Text="Fast arena preset with clean capture behavior, sharper responsiveness, and competitive scheduling."
+                                           Margin="0,10,0,0"
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock Text="OPEN PROFILE"
+                                           Margin="0,12,0,0"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"/>
+                            </StackPanel>
+                        </Grid>
+                    </Button>
+                </WrapPanel>
             </StackPanel>
-
-            <Button Grid.Column="1" Content="BACK" Click="GoBack_Click" Style="{StaticResource GhostBtn}"/>
+            </ScrollViewer>
         </Grid>
 
-        <Grid Grid.Row="1" Margin="0,14,0,0">
+        <Grid x:Name="DetailView"
+              Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="12"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <StackPanel>
-                <TextBlock x:Name="TxtPresetLabel"
-                           Text="POPULAR GAME PRESETS"
-                           Foreground="{StaticResource TextSecondary}"
-                           FontSize="9"
+            <Button x:Name="BtnBackToLibrary"
+                    Width="120"
+                    Height="42"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource GhostBtn}"
+                    Click="BtnBackToLibrary_Click"
+                    Content="BACK"/>
+
+            <StackPanel Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Width="720">
+                <TextBlock x:Name="SelectedGameBadge"
+                           Text="PROFILE"
+                           Foreground="{StaticResource AccentPrimary}"
+                           FontSize="11"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"/>
-                <TextBlock x:Name="TxtCardHint"
-                           Text="Choose a game card to open preset settings."
-                           Foreground="#B4A9D8"
-                           FontSize="11"
-                           Margin="0,6,0,0"
-                           HorizontalAlignment="Center"/>
-            </StackPanel>
+                <TextBlock x:Name="SelectedGameTitle"
+                           Text="VALORANT"
+                           Margin="0,14,0,0"
+                           Foreground="{StaticResource TextPrimary}"
+                           FontFamily="Bahnschrift"
+                           FontSize="44"
+                           FontWeight="Bold"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+                <TextBlock x:Name="SelectedGameDescription"
+                           Margin="0,14,0,0"
+                           Text="Per-title tuning page."
+                           Foreground="{StaticResource TextSecondary}"
+                           FontSize="14"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
 
-            <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
-                <StackPanel HorizontalAlignment="Center" Margin="0,2,0,0">
-                    <WrapPanel HorizontalAlignment="Center" Margin="0,0,0,16">
-                        <RadioButton x:Name="CardValorant"
-                                     Tag="valorant"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgValorant" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#88090610"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="VALORANT" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                                    <TextBlock Text="Riot Vanguard tuned competitive preset" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
+                <Border Margin="0,30,0,0"
+                        Padding="24"
+                        CornerRadius="28"
+                        Background="#130F18"
+                        BorderBrush="#463365"
+                        BorderThickness="1">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
 
-                        <RadioButton x:Name="CardCs2"
-                                     Tag="cs2"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgCs2" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#88090711"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="CS2" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                                    <TextBlock Text="Low-latency input and frame pacing stack" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-
-                        <RadioButton x:Name="CardHoi4"
-                                     Tag="hoi4"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgHoi4" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#88070A12"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="HEARTS OF IRON IV" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="18" FontWeight="Bold"/>
-                                    <TextBlock Text="Grand strategy CPU stability preset" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-
-                        <RadioButton x:Name="CardFiveM"
-                                     Tag="fivem"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgFiveM" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#88050A17"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="FIVEM" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                                    <TextBlock Text="Roleplay optimized low-latency preset" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-
-                        <RadioButton x:Name="CardLol"
-                                     Tag="lol"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgLol" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#88070812"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="LEAGUE" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                                    <TextBlock Text="Stable ranked profile with clean networking" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-
-                        <RadioButton x:Name="CardFortnite"
-                                     Tag="fortnite"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgFortnite" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#88070817"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="FORTNITE" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                                    <TextBlock Text="Low-latency battle royale profile" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-
-                        <RadioButton x:Name="CardApex"
-                                     Tag="apex"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgApex" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#880A0612"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="APEX LEGENDS" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="22" FontWeight="Bold"/>
-                                    <TextBlock Text="Frame consistency and net stack focus" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-
-                        <RadioButton x:Name="CardPubg"
-                                     Tag="pubg"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgPubg" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#880D0A12"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="PUBG" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold"/>
-                                    <TextBlock Text="Stable BR preset with background trim" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-
-                        <RadioButton x:Name="CardR6"
-                                     Tag="r6"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgR6" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#88070C13"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="RAINBOW SIX" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="22" FontWeight="Bold"/>
-                                    <TextBlock Text="Input sharpness + CPU background cut" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-
-                        <RadioButton x:Name="CardOw2"
-                                     Tag="ow2"
-                                     GroupName="GameCards"
-                                     Style="{StaticResource GameCardBtn}"
-                                     Checked="GameCard_Checked">
-                            <Grid>
-                                <Image x:Name="ImgOw2" Source="pack://application:,,,/banner.png" Stretch="UniformToFill" Opacity="0.9"/>
-                                <Rectangle Fill="#88060D15"/>
-                                <StackPanel Margin="12" VerticalAlignment="Bottom">
-                                    <TextBlock Text="OVERWATCH 2" Foreground="#F7F4FF" FontFamily="Bahnschrift" FontSize="22" FontWeight="Bold"/>
-                                    <TextBlock Text="Esports-style latency and frametime tune" Foreground="#BFD0E0" FontSize="10" Margin="0,2,0,0"/>
-                                </StackPanel>
-                            </Grid>
-                        </RadioButton>
-                    </WrapPanel>
-
-                    <Border x:Name="SelectedGamePanel"
-                            Width="980"
-                            MaxWidth="980"
-                            Background="#0D0914"
-                            BorderBrush="#2C2350"
-                            BorderThickness="1"
-                            CornerRadius="14"
-                            Padding="14"
-                            Visibility="Collapsed">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="14"/>
-                                <ColumnDefinition Width="420"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-
-                            <Border Grid.Column="0"
-                                    Background="#151027"
-                                    BorderBrush="#312650"
+                            <Border Padding="14,8"
+                                    CornerRadius="999"
+                                    Background="#16101D"
+                                    BorderBrush="#3F2E59"
                                     BorderThickness="1"
-                                    CornerRadius="10"
-                                    Padding="12">
-                                <StackPanel>
-                                    <TextBlock x:Name="TxtSelectedGameLabel" Text="SELECTED GAME" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
-                                    <TextBlock x:Name="TxtSelectedGameName" Text="VALORANT" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="28" FontWeight="Bold" Margin="0,5,0,0"/>
-                                    <TextBlock x:Name="TxtSelectedGameHint" Text="Vanguard compatibility included." Foreground="#BFD0E0" FontSize="11" Margin="0,8,0,0" TextWrapping="Wrap"/>
-
-                                    <Button x:Name="BtnApplySelectedPreset"
-                                            Content="APPLY GAME PRESET"
-                                            Click="ApplySelectedPreset_Click"
-                                            Style="{StaticResource PrimaryBtn}"
-                                            Height="40"
-                                            Margin="0,14,0,0"/>
-
-                                    <CheckBox x:Name="CbAutoDetect"
-                                              Content="Auto-detect running game EXE"
-                                              Style="{StaticResource SoftCheck}"
-                                              Margin="0,16,0,0"
-                                              IsChecked="True"/>
-                                    <TextBlock x:Name="TxtAutoStatus" Text="Waiting for game process..." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,6,0,0" TextWrapping="Wrap"/>
-
-                                    <TextBlock x:Name="TxtApplyStatus" Text="Profile engine ready." Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,12,0,0" TextWrapping="Wrap"/>
-
-                                    <Border Background="#141522"
-                                            BorderBrush="#44385B"
-                                            BorderThickness="1"
-                                            CornerRadius="10"
-                                            Padding="10"
-                                            Margin="0,12,0,0">
-                                        <StackPanel>
-                                            <TextBlock x:Name="TxtUpdateWatchLabel"
-                                                       Text="GAME UPDATE WATCHER"
-                                                       Foreground="{StaticResource TextSecondary}"
-                                                       FontSize="9"
-                                                       FontWeight="Bold"/>
-                                            <UniformGrid Columns="2" Margin="0,8,0,0">
-                                                <Button x:Name="BtnWatchRegister"
-                                                        Content="REGISTER BUILD"
-                                                        Click="WatchRegister_Click"
-                                                        Style="{StaticResource GhostBtn}"
-                                                        Margin="0,0,5,0"/>
-                                                <Button x:Name="BtnWatchCheck"
-                                                        Content="CHECK UPDATE"
-                                                        Click="WatchCheck_Click"
-                                                        Style="{StaticResource GhostBtn}"
-                                                        Margin="5,0,0,0"/>
-                                            </UniformGrid>
-                                            <TextBlock x:Name="TxtWatchStatus"
-                                                       Text="No tracked build yet."
-                                                       Foreground="#9FB1C7"
-                                                       FontSize="10"
-                                                       Margin="0,8,0,0"
-                                                       TextWrapping="Wrap"/>
-                                        </StackPanel>
-                                    </Border>
-
-                                    <Border x:Name="FiveMToolsPanel"
-                                            Background="#141522"
-                                            BorderBrush="#44385B"
-                                            BorderThickness="1"
-                                            CornerRadius="10"
-                                            Padding="10"
-                                            Margin="0,12,0,0"
-                                            Visibility="Collapsed">
-                                        <StackPanel>
-                                            <TextBlock x:Name="TxtFiveMToolsTitle"
-                                                       Text="FIVEM EXTRA TOOLS"
-                                                       Foreground="{StaticResource TextSecondary}"
-                                                       FontSize="9"
-                                                       FontWeight="Bold"/>
-                                            <Button x:Name="BtnFiveMCleanCache"
-                                                    Content="CLEAN FIVEM CACHE"
-                                                    Click="FiveMCleanCache_Click"
-                                                    Style="{StaticResource GhostBtn}"
-                                                    Margin="0,8,0,0"/>
-                                            <Button x:Name="BtnFiveMCleanLogs"
-                                                    Content="CLEAN LOGS &amp; CRASHES"
-                                                    Click="FiveMCleanLogs_Click"
-                                                    Style="{StaticResource GhostBtn}"
-                                                    Margin="0,8,0,0"/>
-                                            <Button x:Name="BtnFiveMFullPack"
-                                                    Content="APPLY FIVEM FULL PACK"
-                                                    Click="FiveMFullPack_Click"
-                                                    Style="{StaticResource GhostBtn}"
-                                                    Margin="0,8,0,0"/>
-                                        </StackPanel>
-                                    </Border>
-                                </StackPanel>
+                                    HorizontalAlignment="Left">
+                                <TextBlock x:Name="ModeLabelLeft"
+                                           Text="QUALITY"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="13"
+                                           FontWeight="Bold"/>
                             </Border>
-
-                            <Border Grid.Column="2"
-                                    Background="#0B0C14"
-                                    BorderBrush="#352C47"
+                            <Border Grid.Column="1"
+                                    Padding="14,8"
+                                    Margin="12,0"
+                                    CornerRadius="999"
+                                    Background="#1A1322"
+                                    BorderBrush="#57407D"
                                     BorderThickness="1"
-                                    CornerRadius="10"
-                                    Padding="12">
-                                <StackPanel>
-                                    <TextBlock x:Name="TxtProfileSection" Text="MATCH PROFILE" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold"/>
-                                    <TextBlock x:Name="TxtActiveProfile" Text="Competitive" Foreground="{StaticResource TextPrimary}" FontFamily="Bahnschrift" FontSize="24" FontWeight="Bold" Margin="0,5,0,0"/>
-                                    <ProgressBar x:Name="ProfileScore" Style="{StaticResource PurpleBar}" Value="76" Maximum="100" Margin="0,16,0,0"/>
-                                    <TextBlock x:Name="TxtProfileScore" Text="76% balance score" Foreground="{StaticResource TextSecondary}" FontSize="10" Margin="0,8,0,0"/>
-                                    <TextBlock x:Name="TxtProfileSelect" Text="Select a profile" Foreground="{StaticResource TextSecondary}" FontSize="9" FontWeight="Bold" Margin="0,16,0,0"/>
-                                    <Button x:Name="BtnCompetitive" Content="COMPETITIVE" Click="Competitive_Click" Style="{StaticResource GhostBtn}" Margin="0,6,0,0"/>
-                                    <Button x:Name="BtnBalanced" Content="BALANCED" Click="Balanced_Click" Style="{StaticResource GhostBtn}" Margin="0,6,0,0"/>
-                                    <Button x:Name="BtnUltraFps" Content="ULTRA FPS" Click="UltraFps_Click" Style="{StaticResource GhostBtn}" Margin="0,6,0,0"/>
-                                    <Button x:Name="BtnApplyProfile" Content="APPLY TUNER" Click="ApplyCurrentProfile_Click" Style="{StaticResource GhostBtn}" Height="36" Margin="0,14,0,0"/>
-                                </StackPanel>
+                                    HorizontalAlignment="Center">
+                                <TextBlock x:Name="ModeLabelCenter"
+                                           Text="BALANCED"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="13"
+                                           FontWeight="Bold"/>
+                            </Border>
+                            <Border Grid.Column="2"
+                                    Padding="14,8"
+                                    CornerRadius="999"
+                                    Background="#16101D"
+                                    BorderBrush="#3F2E59"
+                                    BorderThickness="1"
+                                    HorizontalAlignment="Right">
+                                <TextBlock x:Name="ModeLabelRight"
+                                           Text="PERFORMANCE"
+                                           Foreground="{StaticResource TextPrimary}"
+                                           FontFamily="Bahnschrift"
+                                           FontSize="13"
+                                           FontWeight="Bold"/>
                             </Border>
                         </Grid>
-                    </Border>
-                </StackPanel>
-            </ScrollViewer>
+
+                        <Slider x:Name="ModeSlider"
+                                Grid.Row="1"
+                                Minimum="0"
+                                Maximum="100"
+                                Value="50"
+                                Margin="0,18,0,0"
+                                Style="{StaticResource GameModeSlider}"
+                                ValueChanged="ModeSlider_ValueChanged"/>
+
+                        <Border Grid.Row="2"
+                                Margin="0,22,0,0"
+                                Padding="18"
+                                CornerRadius="20"
+                                Background="#0C0A11"
+                                BorderBrush="#37264F"
+                                BorderThickness="1">
+                            <StackPanel>
+                                <TextBlock x:Name="ModeBadge"
+                                           Text="BALANCED"
+                                           Foreground="{StaticResource AccentPrimary}"
+                                           FontSize="11"
+                                           FontWeight="Bold"
+                                           HorizontalAlignment="Center"/>
+                                <TextBlock x:Name="ModeDescription"
+                                           Margin="0,10,0,0"
+                                           Text="Good default for stable frametime, visuals, and safer tuning."
+                                           Foreground="{StaticResource TextSecondary}"
+                                           FontSize="13"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap"/>
+                                <TextBlock x:Name="ModeDetail"
+                                           Margin="0,8,0,0"
+                                           Text="Keeps a middle ground between quality and raw performance."
+                                           Foreground="{StaticResource TextMuted}"
+                                           FontSize="12"
+                                           TextAlignment="Center"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <Button x:Name="BtnApplyMode"
+                        Margin="0,28,0,0"
+                        Width="260"
+                        Height="56"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource PrimaryBtn}"
+                        Click="BtnApplyMode_Click"
+                        Content="APPLY THIS PROFILE"/>
+
+                <TextBlock x:Name="ApplyStatusText"
+                           Margin="0,18,0,0"
+                           Text="Choose a side, then apply the selected game profile."
+                           Foreground="{StaticResource TextMuted}"
+                           FontSize="13"
+                           TextAlignment="Center"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="ProgressOverlay"
+              Visibility="Collapsed"
+              Opacity="0"
+              Background="#D9040406">
+            <Border Width="420"
+                    Padding="28"
+                    CornerRadius="28"
+                    Background="#110F16"
+                    BorderBrush="#4A3470"
+                    BorderThickness="1"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <ProgressBar IsIndeterminate="True"
+                                 Style="{StaticResource PurpleBar}"
+                                 Height="8"/>
+
+                    <TextBlock x:Name="OverlayStatusText"
+                               Grid.Row="1"
+                               Margin="0,18,0,0"
+                               Text="Applying game profile..."
+                               Foreground="{StaticResource TextPrimary}"
+                               FontFamily="Bahnschrift"
+                               FontSize="26"
+                               FontWeight="Bold"
+                               TextAlignment="Center"
+                               TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
         </Grid>
     </Grid>
 </Page>
-

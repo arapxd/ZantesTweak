@@ -82,6 +82,32 @@ namespace ZantesEngine.Services
                         "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\Session Manager\\Power\" /v HiberbootEnabled /t REG_DWORD /d 0 /f"
                     }
                 },
+                ["disable_dynamic_tick"] = new()
+                {
+                    Key = "disable_dynamic_tick",
+                    Title = "Disable Dynamic Tick",
+                    Category = "System",
+                    Description = "Disables dynamic tick timer behavior for steadier scheduling.",
+                    Risk = TweakRisk.Caution,
+                    Warning = "May increase idle power usage on some machines.",
+                    Commands = new[]
+                    {
+                        "bcdedit /set disabledynamictick yes"
+                    }
+                },
+                ["disable_connected_standby"] = new()
+                {
+                    Key = "disable_connected_standby",
+                    Title = "Disable Connected Standby",
+                    Category = "System",
+                    Description = "Disables Modern Standby style low-power connected sleep path.",
+                    Risk = TweakRisk.Caution,
+                    Warning = "Sleep behavior can change on laptops and modern mobile chipsets.",
+                    Commands = new[]
+                    {
+                        "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Control\\Power\" /v PlatformAoAcOverride /t REG_DWORD /d 0 /f"
+                    }
+                },
                 ["disable_remote_assistance"] = new()
                 {
                     Key = "disable_remote_assistance",
@@ -616,13 +642,13 @@ namespace ZantesEngine.Services
                     Key = "fivem_cache_cleanup",
                     Title = "FiveM Cache Cleanup",
                     Category = "Maintenance",
-                    Description = "Cleans temporary FiveM cache files for smoother streaming.",
+                    Description = "Cleans safe local FiveM cache folders without touching downloaded server assets.",
                     Recommended = true,
                     Commands = new[]
                     {
-                        "if exist \"%LocalAppData%\\FiveM\\FiveM.app\\data\\cache\" del /f /s /q \"%LocalAppData%\\FiveM\\FiveM.app\\data\\cache\\*\"",
-                        "if exist \"%LocalAppData%\\FiveM\\FiveM.app\\data\\server-cache\" del /f /s /q \"%LocalAppData%\\FiveM\\FiveM.app\\data\\server-cache\\*\"",
-                        "if exist \"%LocalAppData%\\FiveM\\FiveM.app\\data\\server-cache-priv\" del /f /s /q \"%LocalAppData%\\FiveM\\FiveM.app\\data\\server-cache-priv\\*\""
+                        "if exist \"%LocalAppData%\\FiveM\\FiveM.app\\data\\cache\\browser\" del /f /s /q \"%LocalAppData%\\FiveM\\FiveM.app\\data\\cache\\browser\\*\"",
+                        "if exist \"%LocalAppData%\\FiveM\\FiveM.app\\data\\cache\\db\" del /f /s /q \"%LocalAppData%\\FiveM\\FiveM.app\\data\\cache\\db\\*\"",
+                        "if exist \"%LocalAppData%\\FiveM\\FiveM.app\\data\\cache\\priv\" del /f /s /q \"%LocalAppData%\\FiveM\\FiveM.app\\data\\cache\\priv\\*\""
                     }
                 },
                 ["fivem_logs_cleanup"] = new()
@@ -703,6 +729,19 @@ namespace ZantesEngine.Services
                         "sc config SysMain start= disabled"
                     }
                 },
+                ["disable_ndu_service"] = new()
+                {
+                    Key = "disable_ndu_service",
+                    Title = "Disable NDU Service",
+                    Category = "Services",
+                    Description = "Disables Windows Network Data Usage monitoring service.",
+                    Risk = TweakRisk.Caution,
+                    Warning = "Some Windows data usage counters may stop reporting correctly.",
+                    Commands = new[]
+                    {
+                        "sc query Ndu >nul 2>&1 && (sc stop Ndu & sc config Ndu start= disabled) || reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\Ndu\" /v Start /t REG_DWORD /d 4 /f"
+                    }
+                },
                 ["disable_search_index"] = new()
                 {
                     Key = "disable_search_index",
@@ -779,6 +818,21 @@ namespace ZantesEngine.Services
                         "reg add \"HKCU\\Control Panel\\Desktop\\WindowMetrics\" /v MinAnimate /t REG_SZ /d 0 /f"
                     }
                 },
+                ["disable_snap_windows"] = new()
+                {
+                    Key = "disable_snap_windows",
+                    Title = "Disable Snap Windows",
+                    Category = "System",
+                    Description = "Turns off Snap Assist and related multitasking helpers.",
+                    Recommended = true,
+                    Commands = new[]
+                    {
+                        "reg add \"HKCU\\Control Panel\\Desktop\" /v WindowArrangementActive /t REG_SZ /d 0 /f",
+                        "reg add \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\" /v SnapAssist /t REG_DWORD /d 0 /f",
+                        "reg add \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\" /v JointResize /t REG_DWORD /d 0 /f",
+                        "reg add \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\" /v EnableSnapAssistFlyout /t REG_DWORD /d 0 /f"
+                    }
+                },
                 ["disable_xbox_gamebar"] = new()
                 {
                     Key = "disable_xbox_gamebar",
@@ -806,6 +860,27 @@ namespace ZantesEngine.Services
                         "reg add \"HKCU\\System\\GameConfigStore\" /v GameDVR_FSEBehaviorMode /t REG_DWORD /d 2 /f",
                         "reg add \"HKCU\\System\\GameConfigStore\" /v GameDVR_HonorUserFSEBehaviorMode /t REG_DWORD /d 1 /f",
                         "reg add \"HKCU\\System\\GameConfigStore\" /v GameDVR_DXGIHonorFSEWindowsCompatible /t REG_DWORD /d 1 /f"
+                    }
+                },
+                ["low_latency_boot_profile"] = new()
+                {
+                    Key = "low_latency_boot_profile",
+                    Title = "Low-Latency Boot Profile",
+                    Category = "Gaming",
+                    Description = "Applies aggressive BCD timer and virtualization boot flags.",
+                    Risk = TweakRisk.Caution,
+                    Warning = "Can affect Hyper-V, VBS, virtualization, and some anti-cheat setups.",
+                    RequiresRestart = true,
+                    Commands = new[]
+                    {
+                        "bcdedit /set disabledynamictick yes",
+                        "bcdedit /set useplatformtick yes",
+                        "bcdedit /set tscsyncpolicy Enhanced",
+                        "bcdedit /set tpmbootentropy ForceDisable",
+                        "bcdedit /set hypervisorlaunchtype off",
+                        "bcdedit /set quietboot yes",
+                        "bcdedit /set allowedinmemorysettings 0x0",
+                        "bcdedit /set isolatedcontext No"
                     }
                 },
                 ["tcp_nonsack_rtt_resiliency_disabled"] = new()
@@ -987,6 +1062,42 @@ namespace ZantesEngine.Services
                         "reg add \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo\" /v Enabled /t REG_DWORD /d 0 /f"
                     }
                 },
+                ["disable_language_list_access"] = new()
+                {
+                    Key = "disable_language_list_access",
+                    Title = "Disable Language List Access",
+                    Category = "System",
+                    Description = "Prevents websites from using your language list for local content.",
+                    Recommended = true,
+                    Commands = new[]
+                    {
+                        "reg add \"HKCU\\Control Panel\\International\\User Profile\" /v HttpAcceptLanguageOptOut /t REG_DWORD /d 1 /f"
+                    }
+                },
+                ["disable_app_launch_tracking"] = new()
+                {
+                    Key = "disable_app_launch_tracking",
+                    Title = "Disable App Launch Tracking",
+                    Category = "System",
+                    Description = "Stops Windows from tracking app launches for Start and search.",
+                    Recommended = true,
+                    Commands = new[]
+                    {
+                        "reg add \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced\" /v Start_TrackProgs /t REG_DWORD /d 0 /f"
+                    }
+                },
+                ["disable_tailored_experiences"] = new()
+                {
+                    Key = "disable_tailored_experiences",
+                    Title = "Disable Tailored Experiences",
+                    Category = "System",
+                    Description = "Turns off tailored suggestions that use diagnostic data.",
+                    Recommended = true,
+                    Commands = new[]
+                    {
+                        "reg add \"HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Privacy\" /v TailoredExperiencesWithDiagnosticDataEnabled /t REG_DWORD /d 0 /f"
+                    }
+                },
                 ["disable_consumer_features"] = new()
                 {
                     Key = "disable_consumer_features",
@@ -1039,6 +1150,24 @@ namespace ZantesEngine.Services
                         "reg add \"HKLM\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Schedule\\Maintenance\" /v MaintenanceDisabled /t REG_DWORD /d 1 /f"
                     }
                 },
+                ["disable_windows_update_access"] = new()
+                {
+                    Key = "disable_windows_update_access",
+                    Title = "Disable Windows Update Access",
+                    Category = "Services",
+                    Description = "Disables Windows Update policy access and auto update.",
+                    Risk = TweakRisk.Caution,
+                    Warning = "Security and driver updates will stop until the policy is reverted.",
+                    Commands = new[]
+                    {
+                        "reg add \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\" /v DoNotConnectToWindowsUpdateInternetLocations /t REG_DWORD /d 1 /f",
+                        "reg add \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\" /v SetDisableUXWUAccess /t REG_DWORD /d 1 /f",
+                        "reg add \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\\AU\" /v NoAutoUpdate /t REG_DWORD /d 1 /f",
+                        "reg add \"HKLM\\SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsUpdate\" /v ExcludeWUDriversInQualityUpdate /t REG_DWORD /d 1 /f",
+                        "sc stop wuauserv >nul 2>&1 || exit /b 0",
+                        "sc stop UsoSvc >nul 2>&1 || exit /b 0"
+                    }
+                },
                 ["disable_nagle_algorithm"] = new()
                 {
                     Key = "disable_nagle_algorithm",
@@ -1052,6 +1181,19 @@ namespace ZantesEngine.Services
                         "for /f %i in ('reg query \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces\" /s /f \"DhcpIPAddress\" ^| findstr /i \"HKEY\"') do @reg add \"%i\" /v TcpAckFrequency /t REG_DWORD /d 1 /f",
                         "for /f %i in ('reg query \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces\" /s /f \"DhcpIPAddress\" ^| findstr /i \"HKEY\"') do @reg add \"%i\" /v TcpNoDelay /t REG_DWORD /d 1 /f",
                         "for /f %i in ('reg query \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\\Interfaces\" /s /f \"DhcpIPAddress\" ^| findstr /i \"HKEY\"') do @reg add \"%i\" /v TcpDelAckTicks /t REG_DWORD /d 0 /f"
+                    }
+                },
+                ["disable_task_offload"] = new()
+                {
+                    Key = "disable_task_offload",
+                    Title = "Disable Task Offload",
+                    Category = "Network",
+                    Description = "Disables legacy network task offload path in TCP/IP stack.",
+                    Risk = TweakRisk.Caution,
+                    Warning = "Some older NIC drivers may behave differently after the change.",
+                    Commands = new[]
+                    {
+                        "reg add \"HKLM\\SYSTEM\\CurrentControlSet\\Services\\Tcpip\\Parameters\" /v DisableTaskOffload /t REG_DWORD /d 1 /f"
                     }
                 },
                 ["disable_qos_reserved_bandwidth"] = new()
@@ -1119,6 +1261,24 @@ namespace ZantesEngine.Services
                         "net stop wuauserv >nul 2>&1 || exit /b 0",
                         "if exist \"%WINDIR%\\SoftwareDistribution\\Download\" del /f /s /q \"%WINDIR%\\SoftwareDistribution\\Download\\*\"",
                         "net start wuauserv >nul 2>&1 || exit /b 0"
+                    }
+                },
+                ["reset_windows_update_folder"] = new()
+                {
+                    Key = "reset_windows_update_folder",
+                    Title = "Reset Windows Update Folder",
+                    Category = "Maintenance",
+                    Description = "Rebuilds the SoftwareDistribution folder from scratch.",
+                    Risk = TweakRisk.Caution,
+                    Warning = "Resets update history cache and in-progress update files.",
+                    Commands = new[]
+                    {
+                        "net stop wuauserv >nul 2>&1 || exit /b 0",
+                        "net stop UsoSvc >nul 2>&1 || exit /b 0",
+                        "rd /s /q \"%WINDIR%\\SoftwareDistribution\" >nul 2>&1 || exit /b 0",
+                        "md \"%WINDIR%\\SoftwareDistribution\" >nul 2>&1 || exit /b 0",
+                        "net start wuauserv >nul 2>&1 || exit /b 0",
+                        "net start UsoSvc >nul 2>&1 || exit /b 0"
                     }
                 },
                 ["clean_thumbnail_cache"] = new()

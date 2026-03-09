@@ -33,37 +33,22 @@ namespace ZantesEngine.Services
                 [GpuVendor.Nvidia] = new[]
                 {
                     "enable_game_mode",
-                    "disable_game_dvr",
-                    "disable_network_throttling",
-                    "mmcss_system_responsiveness",
-                    "mmcss_games_task_profile",
-                    "disable_mpo",
-                    "nvidia_disable_telemetry",
-                    "nvidia_clean_shader_cache"
+                    "disable_game_dvr"
                 },
                 [GpuVendor.Amd] = new[]
                 {
                     "enable_game_mode",
-                    "disable_game_dvr",
-                    "disable_network_throttling",
-                    "mmcss_system_responsiveness",
-                    "mmcss_games_task_profile",
-                    "disable_mpo"
+                    "disable_game_dvr"
                 },
                 [GpuVendor.Intel] = new[]
                 {
                     "enable_game_mode",
-                    "disable_game_dvr",
-                    "mmcss_system_responsiveness",
-                    "mmcss_games_task_profile",
-                    "disable_mpo"
+                    "disable_game_dvr"
                 },
                 [GpuVendor.Unknown] = new[]
                 {
                     "enable_game_mode",
-                    "disable_game_dvr",
-                    "mmcss_system_responsiveness",
-                    "mmcss_games_task_profile"
+                    "disable_game_dvr"
                 }
             };
 
@@ -112,7 +97,31 @@ namespace ZantesEngine.Services
             }
 
             var detect = DetectPrimaryVendor();
-            var tweaks = GetPresetKeys(detect.Vendor)
+            return await ApplyPresetAsync(detect.Vendor, createRestorePoint, token, detect.Label);
+        }
+
+        public static async Task<DriverPresetApplyResult> ApplyPresetAsync(GpuVendor vendor, bool createRestorePoint, CancellationToken token, string? vendorLabelOverride = null)
+        {
+            if (!SystemTweakEngine.IsAdministrator())
+            {
+                return new DriverPresetApplyResult
+                {
+                    Success = false,
+                    Vendor = vendor,
+                    VendorLabel = vendorLabelOverride ?? vendor.ToString(),
+                    Message = "Administrator privileges required."
+                };
+            }
+
+            string vendorLabel = vendorLabelOverride ?? vendor switch
+            {
+                GpuVendor.Nvidia => "NVIDIA",
+                GpuVendor.Amd => "AMD",
+                GpuVendor.Intel => "Intel",
+                _ => "Unknown GPU"
+            };
+
+            var tweaks = GetPresetKeys(vendor)
                 .Select(SystemTweakCatalog.Get)
                 .Where(t => t != null)
                 .Cast<SystemTweakDefinition>()
@@ -123,8 +132,8 @@ namespace ZantesEngine.Services
                 return new DriverPresetApplyResult
                 {
                     Success = false,
-                    Vendor = detect.Vendor,
-                    VendorLabel = detect.Label,
+                    Vendor = vendor,
+                    VendorLabel = vendorLabel,
                     Message = "No preset tweaks available."
                 };
             }
@@ -137,8 +146,8 @@ namespace ZantesEngine.Services
                     return new DriverPresetApplyResult
                     {
                         Success = false,
-                        Vendor = detect.Vendor,
-                        VendorLabel = detect.Label,
+                        Vendor = vendor,
+                        VendorLabel = vendorLabel,
                         Message = restore.Message
                     };
                 }
@@ -151,8 +160,8 @@ namespace ZantesEngine.Services
             return new DriverPresetApplyResult
             {
                 Success = fail == 0,
-                Vendor = detect.Vendor,
-                VendorLabel = detect.Label,
+                Vendor = vendor,
+                VendorLabel = vendorLabel,
                 AppliedSuccessCount = ok,
                 AppliedFailCount = fail,
                 Message = $"Success: {ok}, Failed: {fail}"
@@ -160,4 +169,3 @@ namespace ZantesEngine.Services
         }
     }
 }
-

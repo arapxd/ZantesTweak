@@ -25,7 +25,6 @@ namespace ZantesEngine
         private CancellationTokenSource _cts = new();
         private DiscordRichPresenceService? _richPresence;
         private bool _richPresenceEnabled = true;
-        private bool _launchMaximized;
         private readonly long _presenceStartUnix = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         private bool _isAuthorized;
         private bool _uiReady;
@@ -79,7 +78,9 @@ namespace ZantesEngine
             MainFrame.Opacity = 1;
             SidebarPanel.IsEnabled = false;
             MainFrame.IsEnabled = false;
+            DockBarPanel.IsEnabled = false;
             NavDashboard.IsChecked = true;
+            SyncDockSelection("dashboard");
             _defaultSessionBackgroundFill = SessionBackgroundVisual.Fill?.CloneCurrentValue() as Brush;
             AvatarFallbackText.Text = "?";
 
@@ -228,13 +229,17 @@ namespace ZantesEngine
 
             TxtLanguageLabel.Text = LanguageManager.T("lang.label");
             SetLanguageSelectorOptions();
-            TxtSettingsButton.Text = LanguageManager.T("settings.button");
+            TxtSidebarSettingsButton.Text = LanguageManager.T("settings.button");
+            TxtDockSettingsButton.Text = LanguageManager.T("settings.button");
 
-            TxtNavDashboard.Text = LanguageManager.T("nav.dashboard");
+            TxtNavDashboard.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "TEK DOKUNUS" : "ONE TAP";
             TxtNavQuickBoost.Text = LanguageManager.T("nav.quickboost");
             TxtNavOptimizer.Text = LanguageManager.T("nav.optimizer");
-            TxtNavTuner.Text = LanguageManager.T("nav.tuner");
-            TxtNavNetwork.Text = LanguageManager.T("nav.network");
+            TxtNavTuner.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "OYUNLAR" : "GAMES";
+            TxtNavNetwork.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "AG + TOOLS" : "NET + TOOLS";
+            TxtDockDashboard.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "TEK DOKUNUS" : "ONE TAP";
+            TxtDockTuner.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "OYUNLAR" : "GAMES";
+            TxtDockNetwork.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "AG + TOOLS" : "NET + TOOLS";
             TxtNavPerformance.Text = LanguageManager.T("nav.performance");
             TxtNavBenchmark.Text = LanguageManager.T("nav.benchmark");
 
@@ -271,6 +276,12 @@ namespace ZantesEngine
             TxtSettingsTitle.Text = LanguageManager.T("settings.title");
             TxtSettingsSub.Text = LanguageManager.T("settings.subtitle");
             TxtSettingsAccountLabel.Text = LanguageManager.T("settings.account");
+            TxtSettingsAccountValue.Text = _isAuthorized && !string.IsNullOrWhiteSpace(_discordDisplayName)
+                ? _discordDisplayName
+                : LanguageManager.T("session.user_none");
+            TxtSettingsAccountState.Text = _isAuthorized
+                ? LanguageManager.T("session.unlocked")
+                : LanguageManager.T("session.locked");
             BtnSwitchAccount.Content = LanguageManager.T("settings.switch_account");
             BtnLogout.Content = LanguageManager.T("settings.logout");
             TxtSettingsPresenceLabel.Text = LanguageManager.T("settings.presence");
@@ -315,6 +326,7 @@ namespace ZantesEngine
             }));
 
             UpdateRichPresenceActivity();
+            SyncDockSelection(_currentNavTag);
         }
 
         private void MainFrame_Navigated(object? sender, NavigationEventArgs e)
@@ -367,12 +379,7 @@ namespace ZantesEngine
 
         private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ClickCount == 2)
-                WindowState = WindowState == WindowState.Maximized
-                    ? WindowState.Normal
-                    : WindowState.Maximized;
-            else
-                DragMove();
+            DragMove();
         }
 
         private void BtnMin_Click(object sender, RoutedEventArgs e)
@@ -380,9 +387,7 @@ namespace ZantesEngine
 
         private void BtnMax_Click(object sender, RoutedEventArgs e)
         {
-            WindowState = WindowState == WindowState.Maximized
-                ? WindowState.Normal
-                : WindowState.Maximized;
+            WindowState = WindowState.Normal;
         }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e)
@@ -390,6 +395,9 @@ namespace ZantesEngine
 
         private void UpdateMaximizeGlyph()
         {
+            if (BtnMax.Visibility != Visibility.Visible)
+                return;
+
             if (BtnMax.Content is not TextBlock glyph)
                 return;
 
@@ -417,27 +425,7 @@ namespace ZantesEngine
             if (LanguageSelector.SelectedItem is not ComboBoxItem item || item.Tag is not string tag)
                 return;
 
-            LanguageSelector.Tag = item.Content?.ToString() ?? string.Empty;
-            LanguageManager.SetLanguage(tag == "tr" ? UiLanguage.Turkish : UiLanguage.English);
-            TxtSettingsCurrentLanguageValue.Text = GetCurrentLanguageDisplayName();
-            SaveSettings();
-
-            if (NavDashboard.IsChecked == true)
-                NavigateTo("dashboard");
-            else if (NavQuickBoost.IsChecked == true)
-                NavigateTo("quickboost");
-            else if (NavOptimizer.IsChecked == true)
-                NavigateTo("optimizer");
-            else if (NavGameTuner.IsChecked == true)
-                NavigateTo("tuner");
-            else if (NavNetwork.IsChecked == true)
-                NavigateTo("network");
-            else if (NavPerformance.IsChecked == true)
-                NavigateTo("performance");
-            else if (NavBenchmark.IsChecked == true)
-                NavigateTo("benchmark");
-
-            UpdateRichPresenceActivity();
+            ApplyLanguageTag(tag);
         }
 
         private async void BtnDiscordLogin_Click(object sender, RoutedEventArgs e)
@@ -524,6 +512,7 @@ namespace ZantesEngine
                 return;
 
             _currentNavTag = tag;
+            SyncDockSelection(tag);
             _isNavigating = true;
 
             var fadeOut = new DoubleAnimation
@@ -586,12 +575,13 @@ namespace ZantesEngine
             => tag switch
             {
                 "dashboard" => new Pages.Dashboard(),
-                "quickboost" => new Pages.QuickBoostPage(),
-                "optimizer" => new Pages.OptimizerPage(),
+                "quickboost" => new Pages.Dashboard(),
+                "optimizer" => new Pages.Dashboard(),
                 "tuner" => new Pages.GameTunerPage(),
                 "network" => new Pages.NetworkPage(),
-                "performance" => new Pages.PerformancePage(),
-                "benchmark" => new Pages.BenchmarkPage(),
+                "settings" => new Pages.SettingsPage(),
+                "performance" => new Pages.NetworkPage(),
+                "benchmark" => new Pages.NetworkPage(),
                 _ => null
             };
 
@@ -621,9 +611,12 @@ namespace ZantesEngine
 
             MainFrame.IsEnabled = true;
             SidebarPanel.IsEnabled = true;
+            DockBarPanel.IsEnabled = true;
 
             AuthStatusText.Text = LanguageManager.T("session.unlocked");
             TxtDiscordUserName.Text = profile.DisplayName;
+            TxtSettingsAccountValue.Text = profile.DisplayName;
+            TxtSettingsAccountState.Text = LanguageManager.T("session.unlocked");
             SetAvatarPlaceholder(profile.DisplayName);
             _ = SetAvatarAsync(profile.AvatarUrl, profile.FallbackAvatarUrl);
             HideSettingsOverlay(animated: false);
@@ -660,14 +653,13 @@ namespace ZantesEngine
         {
             var settings = AppSettingsService.Load();
             _richPresenceEnabled = settings.RichPresenceEnabled;
-            _launchMaximized = settings.LaunchMaximized;
             _autoCheckUpdates = settings.AutoCheckUpdates;
             Topmost = settings.AlwaysOnTop;
             AlwaysOnTopToggle.IsChecked = settings.AlwaysOnTop;
             RichPresenceToggle.IsChecked = _richPresenceEnabled;
-            LaunchMaximizedToggle.IsChecked = _launchMaximized;
+            LaunchMaximizedToggle.IsChecked = false;
             AutoCheckUpdatesToggle.IsChecked = _autoCheckUpdates;
-            WindowState = _launchMaximized ? WindowState.Maximized : WindowState.Normal;
+            WindowState = WindowState.Normal;
             UpdateMaximizeGlyph();
 
             UiLanguage preferredLanguage = settings.PreferredLanguage.Equals("tr", StringComparison.OrdinalIgnoreCase)
@@ -684,7 +676,7 @@ namespace ZantesEngine
             {
                 RichPresenceEnabled = _richPresenceEnabled,
                 AlwaysOnTop = Topmost,
-                LaunchMaximized = _launchMaximized,
+                LaunchMaximized = false,
                 AutoCheckUpdates = _autoCheckUpdates,
                 PreferredLanguage = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "tr" : "en",
                 HasSeenFirstBoot = existing.HasSeenFirstBoot,
@@ -701,8 +693,8 @@ namespace ZantesEngine
             settings.HasSeenQuickBoostLanding = true;
             AppSettingsService.Save(settings);
 
-            NavQuickBoost.IsChecked = true;
-            NavigateTo("quickboost");
+            NavDashboard.IsChecked = true;
+            NavigateTo("dashboard");
         }
 
         private void EnsureRichPresenceService()
@@ -767,6 +759,33 @@ namespace ZantesEngine
         private string GetCurrentLanguageDisplayName()
             => LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Turkish" : "English";
 
+        private void ApplyLanguageTag(string tag)
+        {
+            LanguageSelector.Tag = tag == "tr" ? "Turkish" : "English";
+            LanguageManager.SetLanguage(tag == "tr" ? UiLanguage.Turkish : UiLanguage.English);
+            TxtSettingsCurrentLanguageValue.Text = GetCurrentLanguageDisplayName();
+            SaveSettings();
+
+            if (NavDashboard.IsChecked == true)
+                NavigateTo("dashboard");
+            else if (NavQuickBoost.IsChecked == true)
+                NavigateTo("quickboost");
+            else if (NavOptimizer.IsChecked == true)
+                NavigateTo("optimizer");
+            else if (NavGameTuner.IsChecked == true)
+                NavigateTo("tuner");
+            else if (NavNetwork.IsChecked == true)
+                NavigateTo("network");
+            else if (_currentNavTag == "settings")
+                NavigateTo("settings");
+            else if (NavPerformance.IsChecked == true)
+                NavigateTo("performance");
+            else if (NavBenchmark.IsChecked == true)
+                NavigateTo("benchmark");
+
+            UpdateRichPresenceActivity();
+        }
+
         private void SetLanguageSelectorOptions()
         {
             LangEnItem.Content = "English";
@@ -787,15 +806,104 @@ namespace ZantesEngine
             }
         }
 
+        private void SyncDockSelection(string tag)
+        {
+            if (DockDashboardNav == null || DockTunerNav == null || DockNetworkNav == null || DockSettingsNav == null)
+                return;
+
+            DockDashboardNav.IsChecked = tag == "dashboard" || tag == "quickboost" || tag == "optimizer";
+            DockTunerNav.IsChecked = tag == "tuner";
+            DockNetworkNav.IsChecked = tag == "network" || tag == "performance" || tag == "benchmark";
+            DockSettingsNav.IsChecked = tag == "settings";
+        }
+
+        public bool IsAuthorizedSession => _isAuthorized;
+        public string CurrentAccountName => _isAuthorized && !string.IsNullOrWhiteSpace(_discordDisplayName)
+            ? _discordDisplayName
+            : LanguageManager.T("session.user_none");
+        public string CurrentSessionState => _isAuthorized
+            ? LanguageManager.T("session.unlocked")
+            : LanguageManager.T("session.locked");
+        public bool CurrentRichPresenceEnabled => _richPresenceEnabled;
+        public bool CurrentAlwaysOnTop => Topmost;
+        public bool CurrentAutoCheckUpdates => _autoCheckUpdates;
+        public string CurrentLanguageCode => LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "tr" : "en";
+        public string CurrentLanguageName => GetCurrentLanguageDisplayName();
+        public string CurrentVersionText => GitHubUpdateService.CurrentVersionDisplay;
+        public string CurrentUpdateStatusText => TxtSettingsUpdateStatus.Text;
+
+        public void SetLanguageFromPage(string tag)
+        {
+            ApplyLanguageTag(tag);
+            SyncLanguageSelector();
+        }
+
+        public void SetRichPresenceFromPage(bool enabled)
+        {
+            RichPresenceToggle.IsChecked = enabled;
+            _richPresenceEnabled = enabled;
+            SaveSettings();
+
+            if (_richPresenceEnabled)
+                UpdateRichPresenceActivity();
+            else
+            {
+                _richPresence?.ClearActivity();
+                _richPresence?.Disconnect();
+            }
+        }
+
+        public void SetAlwaysOnTopFromPage(bool enabled)
+        {
+            AlwaysOnTopToggle.IsChecked = enabled;
+            Topmost = enabled;
+            SaveSettings();
+        }
+
+        public void SetAutoUpdateChecksFromPage(bool enabled)
+        {
+            AutoCheckUpdatesToggle.IsChecked = enabled;
+            _autoCheckUpdates = enabled;
+            SaveSettings();
+        }
+
+        public Task CheckForUpdatesFromPageAsync()
+            => CheckForUpdatesAsync(userInitiated: true);
+
+        public bool OpenReleasePageFromPage()
+            => GitHubUpdateService.TryOpenReleasePage(_latestReleaseInfo?.HtmlUrl);
+
+        public async Task SwitchAccountFromPageAsync()
+        {
+            if (_loginInProgress)
+                return;
+
+            DiscordAuthService.SignOut();
+            ResetToLockedSession();
+            await BeginDiscordSignInAsync();
+        }
+
+        public void LogoutFromPage()
+        {
+            if (_loginInProgress)
+                return;
+
+            DiscordAuthService.SignOut();
+            ResetToLockedSession();
+        }
+
         private void ResetToLockedSession()
         {
             _isAuthorized = false;
             _discordDisplayName = string.Empty;
             MainFrame.IsEnabled = false;
             SidebarPanel.IsEnabled = false;
+            DockBarPanel.IsEnabled = false;
 
             AuthStatusText.Text = LanguageManager.T("session.locked");
             TxtDiscordUserName.Text = LanguageManager.T("session.user_none");
+            TxtSettingsAccountValue.Text = LanguageManager.T("session.user_none");
+            TxtSettingsAccountState.Text = LanguageManager.T("session.locked");
             SetAvatarPlaceholder(string.Empty);
 
             ShowLoginOverlay();
@@ -879,7 +987,39 @@ namespace ZantesEngine
             if (!_isAuthorized)
                 return;
 
-            ShowSettingsOverlay();
+            NavigateTo("settings");
+        }
+
+        private void DockDashboard_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!_uiReady)
+                return;
+
+            NavDashboard.IsChecked = true;
+        }
+
+        private void DockTuner_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!_uiReady)
+                return;
+
+            NavGameTuner.IsChecked = true;
+        }
+
+        private void DockNetwork_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!_uiReady)
+                return;
+
+            NavNetwork.IsChecked = true;
+        }
+
+        private void DockSettings_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!_uiReady)
+                return;
+
+            NavigateTo("settings");
         }
 
         private void BtnCloseSettings_Click(object sender, RoutedEventArgs e)
@@ -915,7 +1055,7 @@ namespace ZantesEngine
 
         private void LaunchMaximizedToggle_Click(object sender, RoutedEventArgs e)
         {
-            _launchMaximized = LaunchMaximizedToggle.IsChecked == true;
+            LaunchMaximizedToggle.IsChecked = false;
             SaveSettings();
         }
 

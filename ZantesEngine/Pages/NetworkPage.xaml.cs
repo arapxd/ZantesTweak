@@ -1,517 +1,358 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.NetworkInformation;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
+using System.Windows.Controls.Primitives;
+using System.Windows.Media.Animation;
 using ZantesEngine.Services;
 
 namespace ZantesEngine.Pages
 {
     public partial class NetworkPage : Page
     {
-        private sealed class NetProbe
+        private bool _applyBusy;
+        private bool _uiReady;
+        private readonly DoubleAnimation _spinnerAnimation = new()
         {
-            public bool Success { get; init; }
-            public double LatencyMs { get; init; }
-        }
-
-        private readonly DispatcherTimer _metricsTimer = new() { Interval = TimeSpan.FromSeconds(3) };
-        private readonly Queue<double> _latencyHistory = new();
-        private readonly Queue<bool> _lossHistory = new();
-        private readonly Dictionary<CheckBox, string> _routeToggleMap = new();
-        private DateTime _lastSpikeApplyUtc = DateTime.MinValue;
-        private bool _spikeLatched;
-        private bool _busy;
-        private double _currentLossPercent;
-        private NetworkAutoTuneResult? _wizardResult;
+            From = 0,
+            To = 360,
+            Duration = TimeSpan.FromSeconds(1.1),
+            RepeatBehavior = RepeatBehavior.Forever
+        };
 
         public NetworkPage()
         {
             InitializeComponent();
             Loaded += OnLoaded;
+            LanguageManager.LanguageChanged += OnLanguageChanged;
             Unloaded += OnUnloaded;
+            ApplyLanguage();
+            SelectDetectedVendor();
+            UpdateSelectionSummary();
+            _uiReady = true;
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            if (_routeToggleMap.Count == 0)
-                BindRouteToggles();
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                MainScrollViewer?.ScrollToTop();
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
+        }
 
-            _metricsTimer.Tick += MetricsTimer_Tick;
-            _metricsTimer.Start();
-
-            LanguageManager.LanguageChanged += OnLanguageChanged;
-            OnLanguageChanged();
-            UpdateDriverVendorLabel();
-            AppendOutput(LanguageManager.T("network.log.ready"));
+        private void OnLanguageChanged()
+        {
+            ApplyLanguage();
+            Dispatcher.BeginInvoke(new Action(() => LanguageManager.LocalizeTree(this)));
         }
 
         private void OnUnloaded(object sender, RoutedEventArgs e)
         {
-            _metricsTimer.Stop();
-            _metricsTimer.Tick -= MetricsTimer_Tick;
+            Loaded -= OnLoaded;
             LanguageManager.LanguageChanged -= OnLanguageChanged;
         }
 
-        private void OnLanguageChanged()
-            => Dispatcher.BeginInvoke(new Action(() =>
-            {
-                TxtModule.Text = LanguageManager.T("network.module");
-                TxtTitle.Text = LanguageManager.T("network.title");
-                TxtRouteLabel.Text = LanguageManager.T("network.route_stack");
-                TxtSpikeGuardLabel.Text = LanguageManager.T("network.spike_guard");
-                TxtSpikeThresholdLabel.Text = LanguageManager.T("network.spike_threshold");
-                CbSpikeGuard.Content = LanguageManager.T("network.guard_enable");
-                CbCreateRestoreOnSpike.Content = LanguageManager.T("network.guard_restore");
-                BtnApplyRouteProfile.Content = LanguageManager.T("network.btn.apply_route");
-                TxtRouteProfileLabel.Text = LanguageManager.T("network.route_profile");
-                TxtRouteProfileName.Text = LanguageManager.T("network.route_profile_name");
-                TxtDriverPresetLabel.Text = LanguageManager.T("network.driver_preset");
-                BtnApplyDriverPreset.Content = LanguageManager.T("network.btn.apply_driver");
-                TxtDriverHint.Text = LanguageManager.T("network.driver_hint");
-                TxtSpikeState.Text = LanguageManager.T("network.guard_armed");
-                TxtRouteScore.Text = string.Format(LanguageManager.T("network.readiness"), (int)Math.Round(RouteScoreBar.Value));
-                UpdateDriverVendorLabel();
-                UpdateThresholdLabel();
-                TxtWizardLabel.Text = LanguageManager.T("network.wizard.title");
-                TxtWizardDesc.Text = LanguageManager.T("network.wizard.desc");
-                BtnRunWizard.Content = LanguageManager.T("network.wizard.run");
-                BtnApplyWizard.Content = LanguageManager.T("network.wizard.apply");
-                CbApplyRecommendedDns.Content = LanguageManager.T("network.wizard.apply_dns");
-                if (_wizardResult == null)
-                {
-                    TxtWizardStatus.Text = LanguageManager.T("network.wizard.status_idle");
-                    TxtWizardBestDns.Text = LanguageManager.T("network.wizard.best_dns_empty");
-                    TxtWizardMtu.Text = LanguageManager.T("network.wizard.mtu_empty");
-                    TxtWizardProfile.Text = LanguageManager.T("network.wizard.profile_empty");
-                }
-                Dispatcher.BeginInvoke(new Action(() => LanguageManager.LocalizeTree(this)));
-            }));
-
-        private void BindRouteToggles()
+        private void ApplyLanguage()
         {
-            _routeToggleMap[CbTcpAutotune] = "tcp_autotune";
-            _routeToggleMap[CbNetworkRss] = "network_rss";
-            _routeToggleMap[CbTcpHeuristics] = "tcp_heuristics_disabled";
-            _routeToggleMap[CbDisableNetworkThrottle] = "disable_network_throttling";
+            bool tr = LanguageManager.CurrentLanguage == UiLanguage.Turkish;
+
+            TxtEyebrow.Text = tr ? "AG + ARACLAR" : "NET + TOOLS";
+            TxtTitle.Text = tr
+                ? "Ag araclari ve surucu presetleri."
+                : "Network tools and driver presets.";
+            TxtSubtitle.Text = tr
+                ? "Kartlari sec, sonra secili araci ya da surucu presetini uygula."
+                : "Pick the cards you want, then apply the stack or a driver preset.";
+
+            TxtStackPreviewLabel.Text = tr ? "YIGIN ONIZLEME" : "STACK PREVIEW";
+            TxtToolsSectionLabel.Text = tr ? "AG YIGINI" : "NETWORK STACK";
+            TxtDriverSectionLabel.Text = tr ? "SURUCU PRESETI" : "DRIVER PRESET";
+            TxtDriverTitle.Text = tr ? "GPU ailesini kendin sec." : "Pick the GPU family yourself.";
+            TxtDriverBody.Text = tr
+                ? "NVIDIA, AMD veya Intel secip sadece o preset'i uygula."
+                : "Choose NVIDIA, AMD, or Intel and apply only that preset.";
+            TxtDriverPreviewLabel.Text = tr ? "SURUCU HEDEFI" : "DRIVER TARGET";
+            TxtDriverPreviewHint.Text = tr ? "Manuel uretici preset'i hazir." : "Manual vendor preset is ready.";
+            TxtFooterTitle.Text = tr ? "Sadece istedigini uygula." : "Apply only what you actually want.";
+            TxtApplyToolsButton.Text = tr ? "SECILI ARACLARI UYGULA" : "APPLY SELECTED TOOLS";
+            TxtApplyDriverButton.Text = tr ? "SURUCU PRESETINI UYGULA" : "APPLY DRIVER PRESET";
+
+            TxtCardTcpOptimizerTitle.Text = "TCP OPTIMIZER";
+            TxtCardTcpOptimizerDesc.Text = tr ? "TCP auto-tuning, RSS ve ag kisitlama ayarlarini uygular." : "Applies TCP auto-tuning, RSS, and throttle fixes.";
+            TxtCardFlushDnsTitle.Text = tr ? "DNS TEMIZLE" : "FLUSH DNS";
+            TxtCardFlushDnsDesc.Text = tr ? "Eski DNS kayitlarini aninda temizler." : "Clears cached DNS entries instantly.";
+            TxtCardWinsockTitle.Text = tr ? "WINSOCK SIFIRLA" : "WINSOCK RESET";
+            TxtCardWinsockDesc.Text = tr ? "Karismis soket katalogunu sifirlar." : "Resets a messy socket catalog.";
+            TxtCardHeuristicsTitle.Text = tr ? "TCP HEURISTICS" : "TCP HEURISTICS";
+            TxtCardHeuristicsDesc.Text = tr ? "TCP heuristics geri alma davranisini kapatir." : "Stops TCP heuristics from undoing tuning.";
+            TxtCardChimneyTitle.Text = tr ? "TCP CHIMNEY" : "TCP CHIMNEY";
+            TxtCardChimneyDesc.Text = tr ? "Eski chimney offload yolunu kapatir." : "Disables legacy chimney offload.";
+            TxtCardTimestampsTitle.Text = tr ? "TCP TIMESTAMPS" : "TCP TIMESTAMPS";
+            TxtCardTimestampsDesc.Text = tr ? "Timestamp yukunu kapatir." : "Disables timestamp overhead.";
+            TxtCardSuperfetchTitle.Text = "SUPERFETCH";
+            TxtCardSuperfetchDesc.Text = tr ? "SysMain arka plan yukunu keser." : "Cuts SysMain background disk churn.";
+            TxtCardDynamicTickTitle.Text = tr ? "DYNAMIC TICK" : "DYNAMIC TICK";
+            TxtCardDynamicTickDesc.Text = tr ? "Daha stabil timer icin dynamic tick'i kapatir." : "Disables dynamic tick for steadier timers.";
+            TxtCardTaskOffloadTitle.Text = tr ? "TASK OFFLOADING" : "TASK OFFLOADING";
+            TxtCardTaskOffloadDesc.Text = tr ? "Eski task offload yolunu kapatir." : "Turns off legacy task offload.";
+            TxtCardNduTitle.Text = tr ? "NDU KAPAT" : "DISABLE NDU";
+            TxtCardNduDesc.Text = tr ? "Veri kullanimi izleme yukunu kapatir." : "Turns off data usage monitoring overhead.";
+            TxtCardDiagTitle.Text = tr ? "DIAG TRACK" : "DIAG TRACK";
+            TxtCardDiagDesc.Text = tr ? "Arka plan telemetri servislerini durdurur." : "Stops background telemetry services.";
+
+            TxtVendorNvidiaTitle.Text = "NVIDIA";
+            TxtVendorNvidiaDesc.Text = tr ? "Game Mode, telemetri ve shader cache." : "Game Mode, telemetry, and shader cache.";
+            TxtVendorAmdTitle.Text = "AMD";
+            TxtVendorAmdDesc.Text = tr ? "Radeon icin dengeli preset." : "Balanced preset for Radeon systems.";
+            TxtVendorIntelTitle.Text = "INTEL";
+            TxtVendorIntelDesc.Text = tr ? "Hafif scheduler ve grafik preset'i." : "Lean scheduler and graphics preset.";
+
+            if (!_applyBusy)
+            {
+                StatusText.Text = tr
+                    ? "Geri yukleme noktasi ile secili araclari uygulamaya hazir."
+                    : "Ready to create a restore point and apply the selected tools.";
+                OverlayTitle.Text = tr ? "Arac yigini uygulaniyor..." : "Applying tool stack...";
+                OverlayStatus.Text = tr
+                    ? "Once geri yukleme noktasi, sonra secili servis ve ag araclari."
+                    : "Restore point first, then selected services and network tools.";
+            }
         }
 
-        private async void MetricsTimer_Tick(object? sender, EventArgs e)
+        private void SelectDetectedVendor()
         {
-            var probe = await ProbeAsync();
-            UpdateMetrics(probe);
-
-            if (CbSpikeGuard.IsChecked == true)
-                await EvaluateSpikeGuardAsync(probe);
-        }
-
-        private async Task<NetProbe> ProbeAsync()
-        {
-            try
+            var detected = DriverPresetService.DetectPrimaryVendor();
+            switch (detected.Vendor)
             {
-                using var ping = new Ping();
-                var reply = await ping.SendPingAsync("1.1.1.1", 1200);
-                if (reply.Status == IPStatus.Success)
-                {
-                    return new NetProbe
-                    {
-                        Success = true,
-                        LatencyMs = reply.RoundtripTime
-                    };
-                }
-            }
-            catch
-            {
-                // ignored
+                case GpuVendor.Nvidia:
+                    VendorNvidia.IsChecked = true;
+                    break;
+                case GpuVendor.Amd:
+                    VendorAmd.IsChecked = true;
+                    break;
+                case GpuVendor.Intel:
+                    VendorIntel.IsChecked = true;
+                    break;
+                default:
+                    VendorNvidia.IsChecked = true;
+                    break;
             }
 
-            return new NetProbe
+            TxtDriverPreviewValue.Text = detected.Vendor switch
             {
-                Success = false
+                GpuVendor.Nvidia => "NVIDIA",
+                GpuVendor.Amd => "AMD",
+                GpuVendor.Intel => "INTEL",
+                _ => "NVIDIA"
             };
         }
 
-        private void UpdateMetrics(NetProbe probe)
+        private void Vendor_Checked(object sender, RoutedEventArgs e)
         {
-            _lossHistory.Enqueue(probe.Success);
-            while (_lossHistory.Count > 40)
-                _lossHistory.Dequeue();
-
-            if (probe.Success)
-            {
-                _latencyHistory.Enqueue(probe.LatencyMs);
-                while (_latencyHistory.Count > 20)
-                    _latencyHistory.Dequeue();
-            }
-
-            _currentLossPercent = _lossHistory.Count == 0
-                ? 0
-                : 100d * _lossHistory.Count(v => !v) / _lossHistory.Count;
-
-            double jitter = 0;
-            if (_latencyHistory.Count >= 2)
-            {
-                var arr = _latencyHistory.ToArray();
-                double sum = 0;
-                for (int i = 1; i < arr.Length; i++)
-                    sum += Math.Abs(arr[i] - arr[i - 1]);
-                jitter = sum / (arr.Length - 1);
-            }
-
-            if (probe.Success)
-                TxtPingValue.Text = $"{probe.LatencyMs:F0} ms";
-            else
-                TxtPingValue.Text = "timeout";
-
-            TxtJitterValue.Text = $"{jitter:F1} ms";
-            TxtLossValue.Text = $"{_currentLossPercent:F1}%";
-
-            int score = ComputeReadinessScore(probe.Success ? probe.LatencyMs : 220, jitter, _currentLossPercent);
-            RouteScoreBar.Value = score;
-            TxtRouteScore.Text = string.Format(LanguageManager.T("network.readiness"), score);
-        }
-
-        private static int ComputeReadinessScore(double ping, double jitter, double lossPercent)
-        {
-            double score = 100;
-            score -= Math.Min(50, ping / 2.8);
-            score -= Math.Min(25, jitter * 1.7);
-            score -= Math.Min(45, lossPercent * 5.4);
-            return (int)Math.Clamp(Math.Round(score), 1, 100);
-        }
-
-        private async Task EvaluateSpikeGuardAsync(NetProbe probe)
-        {
-            double threshold = SldSpikeThreshold.Value;
-            bool spike = !probe.Success || probe.LatencyMs > threshold || _currentLossPercent >= 8;
-            bool recovered = probe.Success && probe.LatencyMs < threshold * 0.8 && _currentLossPercent < 3;
-
-            if (recovered)
-                _spikeLatched = false;
-
-            if (!spike || _spikeLatched)
+            if (!_uiReady || TxtDriverPreviewValue == null)
                 return;
 
-            _spikeLatched = true;
-            TxtSpikeState.Text = string.Format(
-                LanguageManager.T("network.guard_triggered"),
-                probe.Success ? probe.LatencyMs.ToString("F0") : "timeout",
-                _currentLossPercent.ToString("F1"));
-            AppendOutput(TxtSpikeState.Text);
-
-            if (DateTime.UtcNow - _lastSpikeApplyUtc < TimeSpan.FromMinutes(2))
+            TxtDriverPreviewValue.Text = GetSelectedVendor() switch
             {
-                AppendOutput(LanguageManager.T("network.guard_cooldown"));
-                return;
-            }
-
-            if (!SystemTweakEngine.IsAdministrator())
-            {
-                AppendOutput(LanguageManager.T("network.guard_need_admin"));
-                return;
-            }
-
-            _lastSpikeApplyUtc = DateTime.UtcNow;
-            await ApplyTweaksAsync(
-                new[] { "tcp_autotune", "network_rss", "tcp_heuristics_disabled", "disable_network_throttling", "dns_flush" },
-                CbCreateRestoreOnSpike.IsChecked == true,
-                LanguageManager.T("network.guard_apply_name"));
+                GpuVendor.Nvidia => "NVIDIA",
+                GpuVendor.Amd => "AMD",
+                GpuVendor.Intel => "INTEL",
+                _ => "NVIDIA"
+            };
         }
 
-        private async void BtnApplyRouteProfile_Click(object sender, RoutedEventArgs e)
+        private void ToolTile_Changed(object sender, RoutedEventArgs e)
         {
-            var keys = _routeToggleMap
-                .Where(p => p.Key.IsChecked == true)
-                .Select(p => p.Value)
-                .ToArray();
-
-            if (keys.Length == 0)
-            {
-                AppendOutput(LanguageManager.T("network.route_none"));
+            if (!_uiReady || TxtSelectedCount == null || BtnApplyTools == null)
                 return;
-            }
 
-            await ApplyTweaksAsync(keys, createRestore: true, LanguageManager.T("network.route_profile_name"));
+            UpdateSelectionSummary();
         }
 
-        private async void BtnApplyDriverPreset_Click(object sender, RoutedEventArgs e)
+        private void UpdateSelectionSummary()
         {
-            if (_busy)
+            int count = GetSelectedKeys().Count;
+            bool tr = LanguageManager.CurrentLanguage == UiLanguage.Turkish;
+
+            TxtSelectedCount.Text = count == 1 ? (tr ? "1 secili" : "1 selected") : (tr ? $"{count} secili" : $"{count} selected");
+            TxtPreviewHint.Text = count == 0
+                ? (tr ? "Baslamak icin en az bir kart sec." : "Pick at least one tool card to start.")
+                : (tr ? "Once geri yukleme, sonra secili araclar." : "Restore point first, then selected tools.");
+            BtnApplyTools.IsEnabled = !_applyBusy && count > 0;
+        }
+
+        private IReadOnlyList<string> GetSelectedKeys()
+        {
+            var keys = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+            foreach (var toggle in new ToggleButton[]
+                     {
+                         ToolTcpOptimizer,
+                         ToolFlushDns,
+                         ToolWinsockReset,
+                         ToolTcpHeuristics,
+                         ToolTcpChimney,
+                         ToolTcpTimestamps,
+                         ToolSuperfetch,
+                         ToolDynamicTick,
+                         ToolTaskOffloading,
+                         ToolDisableNdu,
+                         ToolDiagTrack
+                     })
+            {
+                if (toggle.IsChecked != true || toggle.Tag is not string raw)
+                    continue;
+
+                foreach (string part in raw.Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                    keys.Add(part);
+            }
+
+            return keys.ToList();
+        }
+
+        private GpuVendor GetSelectedVendor()
+        {
+            if (VendorAmd.IsChecked == true)
+                return GpuVendor.Amd;
+            if (VendorIntel.IsChecked == true)
+                return GpuVendor.Intel;
+            return GpuVendor.Nvidia;
+        }
+
+        private async void ApplyTools_Click(object sender, RoutedEventArgs e)
+        {
+            if (_applyBusy)
                 return;
 
             if (!SystemTweakEngine.IsAdministrator())
             {
-                AppendOutput(LanguageManager.T("network.guard_need_admin"));
+                OverlayTitle.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Yonetici yetkisi gerekli." : "Administrator privileges required.";
+                OverlayStatus.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish
+                    ? "Bu akisi calistirmak icin uygulamayi yonetici olarak yeniden ac."
+                    : "Re-open the app as administrator to run this flow.";
+                StatusText.Text = OverlayStatus.Text;
                 return;
             }
 
-            SetBusy(true);
-            AppendOutput(LanguageManager.T("network.driver_apply_start"));
-            var result = await DriverPresetService.ApplyBestPresetAsync(createRestorePoint: true, CancellationToken.None);
-            SetBusy(false);
-
-            if (!result.Success)
-            {
-                AppendOutput($"{LanguageManager.T("network.driver_apply_fail")} {result.Message}");
-                return;
-            }
-
-            AppendOutput($"{LanguageManager.T("network.driver_apply_done")} {result.Message}");
-            UpdateDriverVendorLabel();
-        }
-
-        private async void BtnRunWizard_Click(object sender, RoutedEventArgs e)
-        {
-            if (_busy)
+            var selectedKeys = GetSelectedKeys();
+            if (selectedKeys.Count == 0)
                 return;
 
-            SetBusy(true);
-            TxtWizardStatus.Text = LanguageManager.T("network.wizard.status_running");
-            AppendOutput(LanguageManager.T("network.wizard.status_running"));
-
-            try
-            {
-                var result = await NetworkAutoTuneService.RunAsync(CancellationToken.None);
-                _wizardResult = result;
-
-                TxtWizardStatus.Text = LanguageManager.T("network.wizard.status_ready");
-                TxtWizardBestDns.Text = string.Format(
-                    LanguageManager.T("network.wizard.best_dns_fmt"),
-                    result.BestDns.Label,
-                    result.BestDns.Primary,
-                    result.BestDns.AverageLatencyMs);
-                TxtWizardMtu.Text = string.Format(
-                    LanguageManager.T("network.wizard.mtu_fmt"),
-                    result.RecommendedMtuPayload,
-                    result.RecommendedMtuPayload + 28);
-                TxtWizardProfile.Text = string.Format(
-                    LanguageManager.T("network.wizard.profile_fmt"),
-                    GetProfileLabel(result.Profile),
-                    LanguageManager.LocalizeLiteral(result.Reason));
-
-                ApplyProfileDefaults(result.Profile);
-                AppendOutput(TxtWizardBestDns.Text);
-                AppendOutput(TxtWizardMtu.Text);
-                AppendOutput(TxtWizardProfile.Text);
-            }
-            catch (Exception ex)
-            {
-                _wizardResult = null;
-                TxtWizardStatus.Text = LanguageManager.T("network.wizard.status_failed");
-                AppendOutput($"{LanguageManager.T("network.wizard.status_failed")} {ex.Message}");
-            }
-            finally
-            {
-                SetBusy(false);
-            }
-        }
-
-        private async void BtnApplyWizard_Click(object sender, RoutedEventArgs e)
-        {
-            if (_busy)
-                return;
-
-            if (_wizardResult == null)
-            {
-                AppendOutput(LanguageManager.T("network.wizard.need_run"));
-                return;
-            }
-
-            if (!SystemTweakEngine.IsAdministrator())
-            {
-                AppendOutput(LanguageManager.T("network.wizard.need_admin"));
-                return;
-            }
-
-            var keys = BuildWizardTweakKeys(_wizardResult.Profile).ToList();
-            var tweaks = keys
+            var tweaks = selectedKeys
                 .Select(SystemTweakCatalog.Get)
                 .Where(t => t != null)
                 .Cast<SystemTweakDefinition>()
                 .ToList();
 
-            tweaks.Add(BuildMtuDefinition(_wizardResult.RecommendedMtuPayload));
-            if (CbApplyRecommendedDns.IsChecked == true)
-                tweaks.Add(BuildDnsDefinition(_wizardResult.BestDns));
+            SetBusy(true, driverMode: false);
+            try
+            {
+                var restore = SystemTweakEngine.CreateRestorePoint($"Zantes Tweak Net + Tools {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+                if (!restore.Success)
+                    throw new InvalidOperationException((LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Geri yukleme noktasi olusturulamadi: " : "Restore point failed: ") + restore.Message);
 
-            AppendOutput(LanguageManager.T("network.wizard.apply_start"));
-            await ApplyDefinitionsAsync(
-                tweaks,
-                createRestore: true,
-                $"{LanguageManager.T("network.wizard.profile_name")} ({GetProfileLabel(_wizardResult.Profile)})");
+                var results = await SystemTweakEngine.ApplyAsync(tweaks, CancellationToken.None);
+                int successCount = results.Count(r => r.Success);
+                int failCount = results.Count - successCount;
+
+                OverlayTitle.Text = failCount == 0
+                    ? (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Arac yigini tamamlandi." : "Tool stack complete.")
+                    : (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Arac yigini uyarilarla bitti." : "Tool stack finished with warnings.");
+                OverlayStatus.Text = $"{(LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Geri yukleme" : "Restore")}: {restore.Message}{Environment.NewLine}{(LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Basarili" : "Success")}: {successCount}  {(LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Hatali" : "Failed")}: {failCount}";
+                StatusText.Text = failCount == 0
+                    ? (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Secili araclar basariyla uygulandi." : "Selected tools applied successfully.")
+                    : (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Secili araclar uyarilarla bitti. Ozeti kontrol et." : "Selected tools finished with warnings. Review the summary.");
+
+                await Task.Delay(1000);
+            }
+            catch (Exception ex)
+            {
+                OverlayTitle.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Arac yigini basarisiz." : "Tool stack failed.";
+                OverlayStatus.Text = ex.Message;
+                StatusText.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Arac yigini basarisiz." : "Tool stack failed.";
+                await Task.Delay(900);
+            }
+            finally
+            {
+                SetBusy(false, driverMode: false);
+            }
         }
 
-        private async Task ApplyTweaksAsync(IEnumerable<string> tweakKeys, bool createRestore, string profileName)
+        private async void ApplyDriverPreset_Click(object sender, RoutedEventArgs e)
         {
-            if (_busy)
+            if (_applyBusy)
                 return;
 
             if (!SystemTweakEngine.IsAdministrator())
             {
-                AppendOutput(LanguageManager.T("network.guard_need_admin"));
+                OverlayTitle.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Yonetici yetkisi gerekli." : "Administrator privileges required.";
+                OverlayStatus.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish
+                    ? "Bu akisi calistirmak icin uygulamayi yonetici olarak yeniden ac."
+                    : "Re-open the app as administrator to run this flow.";
+                StatusText.Text = OverlayStatus.Text;
                 return;
             }
 
-            var tweaks = tweakKeys
-                .Select(SystemTweakCatalog.Get)
-                .Where(t => t != null)
-                .Cast<SystemTweakDefinition>()
-                .ToArray();
-
-            if (tweaks.Length == 0)
-                return;
-
-            await ApplyDefinitionsAsync(tweaks, createRestore, profileName);
-        }
-
-        private async Task ApplyDefinitionsAsync(IEnumerable<SystemTweakDefinition> tweaks, bool createRestore, string profileName)
-        {
-            if (_busy)
-                return;
-
-            SetBusy(true);
-            var tweakArray = tweaks.ToArray();
-            AppendOutput(string.Format(LanguageManager.T("network.apply_start"), profileName, tweakArray.Length));
-
-            if (createRestore)
-            {
-                var restore = await Task.Run(() =>
-                    SystemTweakEngine.CreateRestorePoint($"Zantes Tweak Network {DateTime.Now:yyyy-MM-dd HH:mm:ss}"));
-                AppendOutput(LanguageManager.LocalizeLiteral(restore.Message));
-            }
-
-            IReadOnlyList<SystemTweakResult> results;
+            SetBusy(true, driverMode: true);
             try
             {
-                results = await SystemTweakEngine.ApplyAsync(tweakArray, CancellationToken.None);
+                var vendor = GetSelectedVendor();
+                var result = await DriverPresetService.ApplyPresetAsync(vendor, true, CancellationToken.None);
+
+                OverlayTitle.Text = result.Success
+                    ? (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Surucu preset'i tamamlandi." : "Driver preset complete.")
+                    : (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Surucu preset'i uyarilarla bitti." : "Driver preset finished with warnings.");
+                OverlayStatus.Text = $"{result.VendorLabel}{Environment.NewLine}{result.Message}";
+                StatusText.Text = result.Success
+                    ? (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Surucu preset'i basariyla uygulandi." : "Driver preset applied successfully.")
+                    : (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Surucu preset'i uyarilarla bitti." : "Driver preset finished with warnings.");
+
+                await Task.Delay(1000);
             }
             catch (Exception ex)
             {
-                AppendOutput(ex.Message);
-                SetBusy(false);
-                return;
+                OverlayTitle.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Surucu preset'i basarisiz." : "Driver preset failed.";
+                OverlayStatus.Text = ex.Message;
+                StatusText.Text = LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Surucu preset'i basarisiz." : "Driver preset failed.";
+                await Task.Delay(900);
             }
-
-            int ok = results.Count(r => r.Success);
-            int fail = results.Count - ok;
-            AppendOutput(string.Format(LanguageManager.T("network.apply_done"), ok, fail));
-            SetBusy(false);
-        }
-
-        private void UpdateDriverVendorLabel()
-        {
-            var detect = DriverPresetService.DetectPrimaryVendor();
-            TxtDetectedVendor.Text = string.Format(LanguageManager.T("network.driver_detected"), detect.Label);
-        }
-
-        private void SetBusy(bool value)
-        {
-            _busy = value;
-            BtnApplyRouteProfile.IsEnabled = !value;
-            BtnApplyDriverPreset.IsEnabled = !value;
-            BtnRunWizard.IsEnabled = !value;
-            BtnApplyWizard.IsEnabled = !value;
-            CbSpikeGuard.IsEnabled = !value;
-            CbApplyRecommendedDns.IsEnabled = !value;
-        }
-
-        private void AppendOutput(string message)
-        {
-            OutputBox.Text += $"[{DateTime.Now:HH:mm:ss}] {message}{Environment.NewLine}";
-            OutputBox.ScrollToEnd();
-        }
-
-        private void SldSpikeThreshold_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-            => UpdateThresholdLabel();
-
-        private void UpdateThresholdLabel()
-            => TxtSpikeThresholdValue.Text = $"{SldSpikeThreshold.Value:F0} ms";
-
-        private static SystemTweakDefinition BuildMtuDefinition(int mtuPayload)
-        {
-            int mtu = Math.Clamp(mtuPayload + 28, 1280, 1500);
-            string command =
-                $"powershell -NoProfile -Command \"$mtu={mtu}; Get-NetIPInterface -AddressFamily IPv4 | Where-Object {{ $_.ConnectionState -eq 'Connected' -and $_.InterfaceAlias -notlike '*Loopback*' }} | ForEach-Object {{ Set-NetIPInterface -InterfaceIndex $_.InterfaceIndex -NlMtuBytes $mtu -ErrorAction SilentlyContinue }}\"";
-
-            return new SystemTweakDefinition
+            finally
             {
-                Key = "dynamic_set_mtu",
-                Title = "Set Recommended MTU",
-                Category = "Network",
-                Description = $"Applies recommended MTU {mtu} bytes to active IPv4 adapters.",
-                Risk = TweakRisk.Caution,
-                Warning = "Some VPN/PPPoE links may need a different MTU.",
-                Commands = new[] { command }
-            };
-        }
-
-        private static SystemTweakDefinition BuildDnsDefinition(DnsProbeSample dns)
-        {
-            string command =
-                $"powershell -NoProfile -Command \"$servers='{dns.Primary}','{dns.Secondary}'; Get-NetAdapter | Where-Object {{ $_.Status -eq 'Up' -and $_.HardwareInterface -eq $true }} | ForEach-Object {{ Set-DnsClientServerAddress -InterfaceIndex $_.InterfaceIndex -ServerAddresses $servers -ErrorAction SilentlyContinue }}\"";
-
-            return new SystemTweakDefinition
-            {
-                Key = "dynamic_set_dns",
-                Title = "Apply Recommended DNS",
-                Category = "Network",
-                Description = $"Sets active adapters DNS to {dns.Label} ({dns.Primary}, {dns.Secondary}).",
-                Commands = new[] { command }
-            };
-        }
-
-        private IEnumerable<string> BuildWizardTweakKeys(NetworkTuneProfile profile)
-        {
-            var keys = new List<string>
-            {
-                "tcp_autotune",
-                "network_rss",
-                "tcp_heuristics_disabled",
-                "disable_delivery_opt",
-                "dns_flush",
-                "disable_qos_reserved_bandwidth"
-            };
-
-            if (profile != NetworkTuneProfile.Safe)
-                keys.Add("disable_nagle_algorithm");
-
-            if (profile == NetworkTuneProfile.Balanced || profile == NetworkTuneProfile.Aggressive)
-            {
-                keys.Add("tcp_ecn_disabled");
-                keys.Add("tcp_timestamps_disabled");
+                SetBusy(false, driverMode: true);
             }
-
-            if (profile == NetworkTuneProfile.Aggressive)
-            {
-                keys.Add("disable_network_throttling");
-                keys.Add("tcp_rsc_disabled");
-                keys.Add("tcp_chimney_disabled");
-            }
-
-            return keys.Distinct(StringComparer.OrdinalIgnoreCase);
         }
 
-        private void ApplyProfileDefaults(NetworkTuneProfile profile)
+        private void SetBusy(bool busy, bool driverMode)
         {
-            CbTcpAutotune.IsChecked = true;
-            CbNetworkRss.IsChecked = true;
-            CbTcpHeuristics.IsChecked = true;
-            CbDisableNetworkThrottle.IsChecked = profile == NetworkTuneProfile.Aggressive;
-        }
+            _applyBusy = busy;
+            UpdateSelectionSummary();
+            BtnApplyDriver.IsEnabled = !busy;
 
-        private static string GetProfileLabel(NetworkTuneProfile profile)
-            => profile switch
+            if (busy)
             {
-                NetworkTuneProfile.Aggressive => LanguageManager.T("network.wizard.profile.aggressive"),
-                NetworkTuneProfile.Balanced => LanguageManager.T("network.wizard.profile.balanced"),
-                _ => LanguageManager.T("network.wizard.profile.safe")
-            };
-
-        private void GoBack_Click(object sender, RoutedEventArgs e)
-            => NavigationService?.GoBack();
+                StatusText.Text = driverMode
+                    ? (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Geri yukleme noktasi olusturuluyor ve surucu preset'i uygulaniyor..." : "Creating restore point and applying driver preset...")
+                    : (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Geri yukleme noktasi olusturuluyor ve secili araclar uygulaniyor..." : "Creating restore point and applying selected tools...");
+                OverlayTitle.Text = driverMode
+                    ? (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Surucu preset'i uygulaniyor..." : "Applying driver preset...")
+                    : (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Arac yigini uygulaniyor..." : "Applying tool stack...");
+                OverlayStatus.Text = driverMode
+                    ? (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Once geri yukleme noktasi, sonra secilen GPU preset'i." : "Restore point first, then the selected GPU preset.")
+                    : (LanguageManager.CurrentLanguage == UiLanguage.Turkish ? "Once geri yukleme noktasi, sonra secili servis ve ag araclari." : "Restore point first, then selected services and network tools.");
+                ProgressOverlay.Visibility = Visibility.Visible;
+                ProgressOverlay.BeginAnimation(OpacityProperty, new DoubleAnimation(1, TimeSpan.FromMilliseconds(180)));
+                SpinnerRotate.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, _spinnerAnimation);
+            }
+            else
+            {
+                SpinnerRotate.BeginAnimation(System.Windows.Media.RotateTransform.AngleProperty, null);
+                var fade = new DoubleAnimation(0, TimeSpan.FromMilliseconds(220));
+                fade.Completed += (_, _) => ProgressOverlay.Visibility = Visibility.Collapsed;
+                ProgressOverlay.BeginAnimation(OpacityProperty, fade);
+            }
+        }
     }
 }

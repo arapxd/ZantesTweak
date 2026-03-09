@@ -33,22 +33,20 @@ namespace ZantesEngine.Services
 
     public static class SmartOptimizeService
     {
+        private static readonly string[] EvidenceBackedFpsKeys =
+        {
+            "enable_game_mode",
+            "disable_game_dvr"
+        };
+
         public static MaxFpsSafePlan BuildMaxFpsSafePlan()
         {
             var hw = DetectHardware();
-            var keys = SystemTweakCatalog.All.Values
-                .Where(t => !IsBsodRiskKey(t.Key))
-                .Where(t => ShouldApplyForHardware(t.Key, hw))
-                .OrderBy(t => GetCategoryOrder(t.Category))
-                .ThenByDescending(t => t.Recommended)
-                .ThenBy(t => t.Key, StringComparer.OrdinalIgnoreCase)
+            var keys = BuildEvidenceBackedFpsTweaks()
                 .Select(t => t.Key)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
 
-            string reason = hw.IsLaptop
-                ? "WinUtil + Cortex inspired deep profile selected for laptop (BSOD-risk set excluded)."
-                : $"WinUtil + Cortex inspired deep profile selected for desktop ({hw.CpuCores} threads / {hw.RamGb:F0} GB RAM, BSOD-risk set excluded).";
+            string reason = "Evidence-backed FPS baseline selected. Mixed-result power, network, scheduler, service, and cleanup tweaks were excluded.";
 
             return new MaxFpsSafePlan
             {
@@ -62,108 +60,21 @@ namespace ZantesEngine.Services
         {
             var hw = DetectHardware();
             var modules = new List<SmartModulePlan>();
-            var allowedTweaks = BuildAllowedSmartOptimizeTweaks(hw);
-            var powerKeys = GetKeysByCategory(allowedTweaks, "System").ToList();
-
-            string powerReasonKey;
-            IReadOnlyList<object>? powerReasonArgs = null;
-            if (hw.IsLaptop)
-            {
-                powerReasonKey = "quick.reason.power.laptop";
-            }
-            else
-            {
-                powerReasonKey = "quick.reason.power.desktop";
-                powerReasonArgs = new object[] { hw.CpuCores, Math.Round(hw.RamGb, 0) };
-            }
-
-            modules.Add(new SmartModulePlan
-            {
-                Id = "power",
-                NameKey = "quick.card.power",
-                DescriptionKey = "quick.card.power.desc",
-                ReasonKey = powerReasonKey,
-                ReasonArgs = powerReasonArgs,
-                TweakKeys = powerKeys
-            });
-
-            var gamingKeys = GetKeysByCategory(allowedTweaks, "Gaming");
-
-            modules.Add(new SmartModulePlan
-            {
-                Id = "gaming",
-                NameKey = "quick.card.gaming",
-                DescriptionKey = "quick.card.gaming.desc",
-                ReasonKey = "quick.reason.gaming",
-                TweakKeys = gamingKeys
-            });
-
-            var networkKeys = GetKeysByCategory(allowedTweaks, "Network");
-
-            modules.Add(new SmartModulePlan
-            {
-                Id = "network",
-                NameKey = "quick.card.network",
-                DescriptionKey = "quick.card.network.desc",
-                ReasonKey = "quick.reason.network",
-                TweakKeys = networkKeys
-            });
-
-            var gpuKeys = allowedTweaks
-                .Where(t => IsGpuFocusedKey(t.Key))
+            var gamingKeys = BuildEvidenceBackedFpsTweaks()
                 .Select(t => t.Key)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToArray();
-            string gpuReasonKey = "quick.reason.gpu.unknown";
-            IReadOnlyList<object>? gpuReasonArgs = new object[] { hw.GpuName };
-            if (hw.GpuVendor == GpuVendor.Nvidia)
-            {
-                gpuReasonKey = "quick.reason.gpu.nvidia";
-            }
-            else if (hw.GpuVendor == GpuVendor.Amd)
-            {
-                gpuReasonKey = "quick.reason.gpu.amd";
-            }
-            else if (hw.GpuVendor == GpuVendor.Intel)
-            {
-                gpuReasonKey = "quick.reason.gpu.intel";
-            }
-
-            var serviceKeys = allowedTweaks
-                .Where(t => t.Category is "Privacy" or "Services")
-                .Select(t => t.Key)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
                 .ToArray();
 
-            modules.Add(new SmartModulePlan
+            if (gamingKeys.Length > 0)
             {
-                Id = "gpu",
-                NameKey = "quick.card.gpu",
-                DescriptionKey = "quick.card.gpu.desc",
-                ReasonKey = gpuReasonKey,
-                ReasonArgs = gpuReasonArgs,
-                TweakKeys = gpuKeys
-            });
-
-            modules.Add(new SmartModulePlan
-            {
-                Id = "services",
-                NameKey = "quick.card.services",
-                DescriptionKey = "quick.card.services.desc",
-                ReasonKey = "quick.reason.services",
-                TweakKeys = serviceKeys
-            });
-
-            var maintenanceKeys = GetKeysByCategory(allowedTweaks, "Maintenance");
-
-            modules.Add(new SmartModulePlan
-            {
-                Id = "maintenance",
-                NameKey = "quick.card.maintenance",
-                DescriptionKey = "quick.card.maintenance.desc",
-                ReasonKey = hw.PrimaryDiskIsSsd ? "quick.reason.maintenance.ssd" : "quick.reason.maintenance.hdd",
-                TweakKeys = maintenanceKeys
-            });
+                modules.Add(new SmartModulePlan
+                {
+                    Id = "gaming",
+                    NameKey = "quick.card.gaming",
+                    DescriptionKey = "quick.card.gaming.desc",
+                    ReasonKey = "quick.reason.gaming",
+                    TweakKeys = gamingKeys
+                });
+            }
 
             return new SmartOptimizePlan
             {
@@ -174,71 +85,16 @@ namespace ZantesEngine.Services
 
         public static IReadOnlyList<SystemTweakDefinition> BuildDashboardApplyTweaks(IEnumerable<string> selectionIds)
         {
-            var hw = DetectHardware();
-            var allowedTweaks = BuildAllowedSmartOptimizeTweaks(hw);
-            var selected = new HashSet<string>(selectionIds, StringComparer.OrdinalIgnoreCase);
-            var collected = new List<SystemTweakDefinition>();
-
-            foreach (string id in selected)
-            {
-                switch (id)
-                {
-                    case "kernel":
-                        collected.AddRange(allowedTweaks.Where(t => t.Category.Equals("System", StringComparison.OrdinalIgnoreCase)));
-                        break;
-                    case "tcp":
-                        collected.AddRange(allowedTweaks.Where(t => t.Category.Equals("Network", StringComparison.OrdinalIgnoreCase)));
-                        break;
-                    case "mmcss":
-                        collected.AddRange(allowedTweaks.Where(t => t.Category.Equals("Gaming", StringComparison.OrdinalIgnoreCase)));
-                        break;
-                    case "ram":
-                        collected.AddRange(allowedTweaks.Where(t => t.Key is
-                            "disable_memory_compression" or
-                            "visualfx_performance" or
-                            "clean_temp" or
-                            "clear_directx_shader_cache" or
-                            "clean_thumbnail_cache" or
-                            "clean_windows_update_cache"));
-                        break;
-                    case "driver":
-                        collected.AddRange(allowedTweaks.Where(t => IsGpuFocusedKey(t.Key)));
-                        break;
-                    case "debloat":
-                        collected.AddRange(allowedTweaks.Where(t => t.Category is "Privacy" or "Services"));
-                        break;
-                }
-            }
-
-            return collected
-                .GroupBy(t => t.Key, StringComparer.OrdinalIgnoreCase)
-                .Select(g => g.First())
-                .OrderBy(t => GetCategoryOrder(t.Category))
-                .ThenByDescending(t => t.Recommended)
-                .ThenBy(t => t.Key, StringComparer.OrdinalIgnoreCase)
-                .ToArray();
+            _ = selectionIds;
+            return BuildEvidenceBackedFpsTweaks();
         }
 
-        private static SystemTweakDefinition[] BuildAllowedSmartOptimizeTweaks(
-            (string CpuName, int CpuCores, double RamGb, string GpuName, GpuVendor GpuVendor, bool IsLaptop, bool PrimaryDiskIsSsd) hw)
-            => SystemTweakCatalog.All.Values
-                .Where(t => !IsBsodRiskKey(t.Key))
-                .Where(t => !IsSmartOptimizeExcludedKey(t.Key))
-                .Where(t => ShouldApplyForHardware(t.Key, hw))
-                .OrderBy(t => GetCategoryOrder(t.Category))
-                .ThenByDescending(t => t.Recommended)
-                .ThenBy(t => t.Key, StringComparer.OrdinalIgnoreCase)
+        private static SystemTweakDefinition[] BuildEvidenceBackedFpsTweaks()
+            => EvidenceBackedFpsKeys
+                .Select(SystemTweakCatalog.Get)
+                .Where(t => t != null)
+                .Cast<SystemTweakDefinition>()
                 .ToArray();
-
-        private static IReadOnlyList<string> GetKeysByCategory(IEnumerable<SystemTweakDefinition> tweaks, params string[] categories)
-        {
-            var categorySet = new HashSet<string>(categories, StringComparer.OrdinalIgnoreCase);
-            return tweaks
-                .Where(t => categorySet.Contains(t.Category))
-                .Select(t => t.Key)
-                .Distinct(StringComparer.OrdinalIgnoreCase)
-                .ToArray();
-        }
 
         public static async Task<IReadOnlyList<SystemTweakResult>> ApplyModulesAsync(
             IEnumerable<SmartModulePlan> modules,
@@ -343,57 +199,5 @@ namespace ZantesEngine.Services
 
             return (cpuName, cores, ramGb, gpuName, gpuVendor, isLaptop, primaryDiskIsSsd);
         }
-
-        private static bool IsBsodRiskKey(string key)
-            => key is "disable_cpu_mitigations"
-                or "force_msi_all_devices"
-                or "gpu_tdr_level_off"
-                or "kernel_sehop_off"
-                or "bcd_disable_integrity_checks"
-                or "bcd_nx_alwaysoff";
-
-        private static bool IsSmartOptimizeExcludedKey(string key)
-            => key is "disable_fast_startup"
-                or "priority_separation"
-                or "winsock_reset"
-                or "clear_prefetch"
-                || key.StartsWith("fivem_", StringComparison.OrdinalIgnoreCase);
-
-        private static bool IsGpuFocusedKey(string key)
-            => key is "disable_mpo"
-                or "hw_scheduling"
-                or "nvidia_disable_telemetry"
-                or "nvidia_clean_shader_cache";
-
-        private static bool ShouldApplyForHardware(
-            string key,
-            (string CpuName, int CpuCores, double RamGb, string GpuName, GpuVendor GpuVendor, bool IsLaptop, bool PrimaryDiskIsSsd) hw)
-        {
-            if (hw.IsLaptop && key is "cpu_minimum_state_100" or "disable_hibernate")
-                return false;
-
-            if (hw.RamGb < 8 && key is "disable_memory_compression" or "clear_prefetch")
-                return false;
-
-            if (hw.GpuVendor == GpuVendor.Intel && key is "nvidia_disable_telemetry" or "nvidia_clean_shader_cache")
-                return false;
-
-            if (hw.CpuCores < 8 && key is "tcp_rsc_disabled")
-                return false;
-
-            return true;
-        }
-
-        private static int GetCategoryOrder(string category)
-            => category switch
-            {
-                "System" => 0,
-                "Gaming" => 1,
-                "Network" => 2,
-                "Privacy" => 3,
-                "Services" => 4,
-                "Maintenance" => 5,
-                _ => 6
-            };
     }
 }

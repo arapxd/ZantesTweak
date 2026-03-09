@@ -16,64 +16,8 @@ namespace ZantesEngine.Pages
         private readonly Dictionary<CheckBox, string> _toggleMap = new();
         private static readonly string[] OneClickMaxFpsFallbackKeys =
         {
-            "power_high_performance",
-            "disable_startup_delay",
-            "enable_taskbar_end_task",
-            "disable_menu_show_delay",
-            "disable_window_animations",
-            "disable_widgets",
-            "disable_copilot",
-            "disable_start_recommendations",
-            "disable_windows_spotlight",
-            "disable_advertising_id",
-            "ntfs_disable_8dot3",
-            "disable_fast_startup",
-            "cpu_maximum_state_100",
-            "cpu_minimum_state_100",
-            "cpu_core_parking_off",
-            "visualfx_performance",
-            "disable_remote_assistance",
-            "disable_mouse_accel",
             "enable_game_mode",
-            "disable_game_dvr",
-            "disable_xbox_gamebar",
-            "hw_scheduling",
-            "disable_network_throttling",
-            "mmcss_system_responsiveness",
-            "mmcss_games_task_profile",
-            "usb_selective_suspend_off",
-            "disable_mpo",
-            "tcp_autotune",
-            "network_rss",
-            "tcp_timestamps_disabled",
-            "tcp_ecn_disabled",
-            "tcp_heuristics_disabled",
-            "tcp_chimney_disabled",
-            "tcp_rsc_disabled",
-            "disable_nagle_algorithm",
-            "disable_qos_reserved_bandwidth",
-            "disable_delivery_opt",
-            "disable_diagtrack_service",
-            "disable_windows_error_reporting",
-            "disable_edge_background_mode",
-            "disable_phone_service",
-            "disable_consumer_features",
-            "disable_remote_registry",
-            "disable_storage_sense",
-            "disable_onedrive_startup",
-            "disable_teams_autostart",
-            "nvidia_disable_telemetry",
-            "disable_windows_tips",
-            "disable_feedback_notifications",
-            "disable_activity_history",
-            "disable_clipboard_history",
-            "disable_search_web_results",
-            "disable_powershell_telemetry",
-            "disable_background_apps",
-            "disable_transparency",
-            "prefer_ipv4_over_ipv6",
-            "nvidia_clean_shader_cache",
-            "clear_directx_shader_cache"
+            "disable_game_dvr"
         };
         private bool _busy;
         private int _toastVersion;
@@ -132,14 +76,19 @@ namespace ZantesEngine.Pages
             _toggleMap[CbDisableStartRecommendations] = "disable_start_recommendations";
             _toggleMap[CbDisableWindowsSpotlight] = "disable_windows_spotlight";
             _toggleMap[CbDisableAdvertisingId] = "disable_advertising_id";
+            _toggleMap[CbDisableLanguageListAccess] = "disable_language_list_access";
+            _toggleMap[CbDisableAppLaunchTracking] = "disable_app_launch_tracking";
+            _toggleMap[CbDisableTailoredExperiences] = "disable_tailored_experiences";
             _toggleMap[CbDisableMenuShowDelay] = "disable_menu_show_delay";
             _toggleMap[CbDisableWindowAnimations] = "disable_window_animations";
+            _toggleMap[CbDisableSnapWindows] = "disable_snap_windows";
 
             _toggleMap[CbDisableMouseAccel] = "disable_mouse_accel";
             _toggleMap[CbEnableGameMode] = "enable_game_mode";
             _toggleMap[CbDisableGameDvr] = "disable_game_dvr";
             _toggleMap[CbDisableXboxGamebar] = "disable_xbox_gamebar";
             _toggleMap[CbDisableFullscreenOptimizations] = "disable_fullscreen_optimizations";
+            _toggleMap[CbLowLatencyBootProfile] = "low_latency_boot_profile";
             _toggleMap[CbHwScheduling] = "hw_scheduling";
             _toggleMap[CbPrioritySeparation] = "priority_separation";
             _toggleMap[CbDisableStickyKeys] = "disable_sticky_keys_shortcut";
@@ -191,6 +140,7 @@ namespace ZantesEngine.Pages
             _toggleMap[CbDisableRemoteRegistry] = "disable_remote_registry";
             _toggleMap[CbDisableSsdpUpnpServices] = "disable_ssdp_upnp_services";
             _toggleMap[CbDisableAutoMaintenance] = "disable_auto_maintenance";
+            _toggleMap[CbDisableWindowsUpdateAccess] = "disable_windows_update_access";
             _toggleMap[CbDisableStorageSense] = "disable_storage_sense";
             _toggleMap[CbDisableOneDriveStartup] = "disable_onedrive_startup";
             _toggleMap[CbDisableTeamsAutoStart] = "disable_teams_autostart";
@@ -199,6 +149,7 @@ namespace ZantesEngine.Pages
             _toggleMap[CbNvidiaShaderCacheClean] = "nvidia_clean_shader_cache";
             _toggleMap[CbDirectXShaderCacheClean] = "clear_directx_shader_cache";
             _toggleMap[CbCleanWindowsUpdateCache] = "clean_windows_update_cache";
+            _toggleMap[CbResetWindowsUpdateFolder] = "reset_windows_update_folder";
             _toggleMap[CbCleanThumbnailCache] = "clean_thumbnail_cache";
             _toggleMap[CbFiveMCacheCleanup] = "fivem_cache_cleanup";
             _toggleMap[CbFiveMLogsCleanup] = "fivem_logs_cleanup";
@@ -577,7 +528,12 @@ namespace ZantesEngine.Pages
 
             int okCount = results.Count(r => r.Success);
             int failCount = results.Count - okCount;
+            var gpuResult = GpuAutomationService.ApplyHighPerformanceForKnownGames();
+            var processPolicyResult = GameProcessPolicyService.ApplyPerformancePolicyForKnownGames();
+            AppendOutput($"[GPU PREF] {gpuResult.UpdatedEntryCount}");
+            AppendOutput($"[PROCESS POLICY] {processPolicyResult.UpdatedProcessCount}");
             var doneText = string.Format(LanguageManager.T("optimizer.msg.one_click_done"), okCount, failCount);
+            doneText += $"\nGPU preference: {gpuResult.UpdatedEntryCount}\nProcess policy: {processPolicyResult.UpdatedProcessCount}";
 
             ShowActionToast(
                 failCount == 0 ? "ONE-CLICK COMPLETED" : "ONE-CLICK COMPLETED WITH WARNINGS",

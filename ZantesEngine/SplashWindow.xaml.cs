@@ -49,7 +49,6 @@ namespace ZantesEngine
                 _isFirstBoot = !settings.HasSeenFirstBoot;
                 ApplyLanguage();
 
-                SpawnParticles();
                 if (_isFirstBoot)
                 {
                     FirstBootBadge.Visibility = Visibility.Visible;
@@ -61,6 +60,8 @@ namespace ZantesEngine
                 }
 
                 UpdateBootState(LanguageManager.T("splash.prepare.status"), LanguageManager.T("splash.prepare.hint"), 5);
+                ParticleCanvas.Visibility = Visibility.Visible;
+                SpawnParticles();
 
                 await Task.Delay(80);
                 await AnimateIn();
@@ -152,15 +153,13 @@ namespace ZantesEngine
 
         private async Task AnimateIn()
         {
-            FadeEl(BeamTopLeft, 0.0, 1.8, 0, 0.65);
-            FadeEl(ContentPanel, 0.35, 0.95, 0, 1);
-            MoveY(ContentPanel, 0.35, 0.95, 24, 0);
-            FadeEl(BottomLine, 0.9, 0.7, 0, 1);
-
-            await Task.Delay(1400);
-
-            PulseEl(BeamTopLeft, 0.65, 0.95, 3.6);
-            PulseEl(Dot, 1.0, 0.2, 1.0);
+            FadeEl(ContentPanel, 0.0, 0.45, 0, 1);
+            MoveY(ContentPanel, 0.0, 0.45, 14, 0);
+            FadeEl(HeroFrame, 0.08, 0.42, 0, 1);
+            MoveY(HeroFrame, 0.08, 0.42, 16, 0);
+            FadeEl(BottomLine, 0.1, 0.4, 0, 0.82);
+            await Task.Delay(520);
+            PulseEl(Dot, 1.0, 0.26, 1.0);
         }
 
         private async Task AnimateOut()

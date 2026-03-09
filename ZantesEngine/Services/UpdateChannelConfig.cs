@@ -4,18 +4,18 @@ namespace ZantesEngine.Services
 {
     internal static class UpdateChannelConfig
     {
-        private const string PlaceholderOwner = "arapxd";
-        private const string PlaceholderRepo = "ZantesTweak";
+        private const string DefaultOwner = "arapxd";
+        private const string DefaultRepo = "ZantesTweak";
 
         public static string Owner =>
-            Read("ZANTES_GITHUB_OWNER", PlaceholderOwner);
+            Read("ZANTES_GITHUB_OWNER", DefaultOwner);
 
         public static string Repo =>
-            Read("ZANTES_GITHUB_REPO", PlaceholderRepo);
+            Read("ZANTES_GITHUB_REPO", DefaultRepo);
 
         public static bool IsConfigured =>
-            !string.Equals(Owner, PlaceholderOwner, StringComparison.OrdinalIgnoreCase) &&
-            !string.Equals(Repo, PlaceholderRepo, StringComparison.OrdinalIgnoreCase);
+            !string.IsNullOrWhiteSpace(Owner) &&
+            !string.IsNullOrWhiteSpace(Repo);
 
         private static string Read(string envName, string fallback)
         {
